@@ -27,9 +27,6 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
     // constructor variables::
     private final RecursiveCrawledDataTransferObject dataTransfer;
 
-    private final String domain = dataTransfer.getDomain();
-    private final CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
-
     @Override
     public void run() {
         parseWallWithOffset();
@@ -37,6 +34,9 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
     @SneakyThrows
     private void parseWallWithOffset() {
+        String domain = dataTransfer.getDomain();
+
+
         // crawl new posts && start with saved offset if crawling were interrupted:
         Integer offsetToStart = CrawlerStateStorage.getOffsetToStart(domain);
         if (offsetToStart != null) {
@@ -62,7 +62,7 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
         }
 
         // log start of process with work thread name:
-        log.info("Start domain:\"{}\" parsing with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
+        log.info("Start domain \"{}\" parsing with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
         ResponseDto response = null;
 
         try {
@@ -72,7 +72,7 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
         } catch (ClientException ex) {
             // catch and log any exception while proceeding:
-            log.info("Failed to parse response json with exception {} in domain:\"{}\", offset : {}, sleep for {} and retrying. Attempt {}/3"
+            log.info("Failed to parse response json with exception {} in domain \"{}\", offset : {}, sleep for {} and retrying. Attempt {}/3"
                     , ex, domain, offset, dataTransfer.getRequestTimeout(), retryRecursionDepth);
 
             // sleep before retrying request:
@@ -86,7 +86,7 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
                 offset -= 100;
                 retryRecursionDepth = 0;
 
-                log.info("Exiting domain:\"{}\" parsing recursion, rolling back offset to {}", domain, offset);
+                log.info("Exiting domain \"{}\" parsing recursion, rolling back offset to {}", domain, offset);
                 return;
             }
 
@@ -101,7 +101,7 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
         } else if (response != null) {
             // if response has vk api errors - log and stop:
-            log.info("Stop domain parsing:\"{}\" with status code {}, reason \"{}\""
+            log.info("Stop domain parsing \"{}\" with status code {}, reason \"{}\""
                     , domain, response.getError().getError_code(), response.getError().getError_msg());
 
             // save crawler state i.e. count of parsed posts to start with later:
@@ -114,7 +114,7 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
         // if offset is more or equals count of posts on the wall - stop task:
         if (offset >= response.getCount()) {
-            log.info("Stop domain parsing:\"{}\", all post were processed!", domain);
+            log.info("Stop domain parsing \"{}\", all post were processed!", domain);
 
             // join current thread - allow to re-use to parse next domain:
             Thread.currentThread().join();
@@ -126,6 +126,8 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
     }
 
     private void saveToElasticSearch(boolean validateData) {
+        CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
+
         if (validateData) {
             deleteAlreadySavedPostsFromTemporaryStorage();
         }
@@ -139,6 +141,8 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
     }
 
     private void deleteAlreadySavedPostsFromTemporaryStorage() {
+        CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
+
         // filter crawled result:
         List<WallPost> alreadySavedPosts = parsedPosts.stream()
                 // distinct if we had error and re-parsed offset:
