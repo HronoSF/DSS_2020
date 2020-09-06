@@ -2,7 +2,7 @@ package com.hronosf.crawler.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.dto.StartCrawlingRequestDto;
-import com.hronosf.crawler.jobs.RecursiveCrawlerJob;
+import com.hronosf.crawler.jobs.RecursiveSequentialCrawlerJob;
 import com.hronosf.crawler.mappers.WallPostMapper;
 import com.hronosf.crawler.repository.CrawledPostRepository;
 import com.hronosf.crawler.services.TaskOrchestrationService;
@@ -65,7 +65,7 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
                     queryTemplate.query(query).domain(domain);
 
                     // start parsing:
-                    scheduler.schedule(new RecursiveCrawlerJob(queryTemplate.build()), new Date());
+                    scheduler.schedule(new RecursiveSequentialCrawlerJob(queryTemplate.build()), new Date());
                 }
         );
     }

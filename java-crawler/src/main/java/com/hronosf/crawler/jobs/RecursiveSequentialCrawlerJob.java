@@ -4,6 +4,7 @@ import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.ResponseDto;
 import com.hronosf.crawler.exceptions.CrawlerException;
 import com.hronosf.crawler.repository.CrawledPostRepository;
+import com.hronosf.crawler.util.CrawlerStateStorage;
 import com.hronosf.crawler.util.RecursiveCrawledDataTransferObject;
 import com.vk.api.sdk.exceptions.ClientException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @SuppressWarnings("java:S1948")
-public class RecursiveCrawlerJob implements Runnable {
+public class RecursiveSequentialCrawlerJob implements Runnable {
 
     private Integer offset = 0;
     private int retryRecursionDepth = 0;
@@ -26,23 +27,38 @@ public class RecursiveCrawlerJob implements Runnable {
     // constructor variables::
     private final RecursiveCrawledDataTransferObject dataTransfer;
 
+    private final String domain = dataTransfer.getDomain();
+    private final CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
+
     @Override
     public void run() {
-        // if we want to start/continue from interrupted point:
-        if (dataTransfer.getOffset() != null) {
-            offset = dataTransfer.getOffset();
-        }
-
         parseWallWithOffset();
     }
 
     @SneakyThrows
     private void parseWallWithOffset() {
-        String domain = dataTransfer.getDomain();
+        // crawl new posts && start with saved offset if crawling were interrupted:
+        Integer offsetToStart = CrawlerStateStorage.getOffsetToStart(domain);
+        if (offsetToStart != null) {
+            // delete already saved posts:
+            deleteAlreadySavedPostsFromTemporaryStorage();
 
-        // if parsed post count >=500 save to ElasticSearch && clean temporary store:
+            // if we have new posts - save to Es:
+            if (!parsedPosts.isEmpty()) {
+                // save new posts to Es:
+                saveToElasticSearch(false);
+
+                // move offset to position before interruption:
+                offset += offsetToStart + parsedPosts.size();
+
+                // clean up state:
+                CrawlerStateStorage.remove(domain);
+            }
+        }
+
+        // Trash hold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
         if (parsedPosts.size() >= 500) {
-            saveToElasticSearch();
+            saveToElasticSearch(true);
         }
 
         // log start of process with work thread name:
@@ -56,7 +72,7 @@ public class RecursiveCrawlerJob implements Runnable {
 
         } catch (ClientException ex) {
             // catch and log any exception while proceeding:
-            log.info("Failed to request/parse response json with exception {} in domain:\"{}\", offset : {},sleep for {} and retrying. Attempt {}/3"
+            log.info("Failed to parse response json with exception {} in domain:\"{}\", offset : {}, sleep for {} and retrying. Attempt {}/3"
                     , ex, domain, offset, dataTransfer.getRequestTimeout(), retryRecursionDepth);
 
             // sleep before retrying request:
@@ -83,20 +99,25 @@ public class RecursiveCrawlerJob implements Runnable {
             // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
             response.getItems().forEach(item -> parsedPosts.add(dataTransfer.getMapper().fromDto(item)));
 
-            // if offset is more or equals count of posts on the wall - stop task:
-            if (offset >= response.getCount()) {
-                log.info("Stop domain parsing:\"{}\", all post were processed!", domain);
-
-                // join current thread - allow to re-use to parse next resource:
-                Thread.currentThread().join();
-            }
         } else if (response != null) {
             // if response has vk api errors - log and stop:
             log.info("Stop domain parsing:\"{}\" with status code {}, reason \"{}\""
                     , domain, response.getError().getError_code(), response.getError().getError_msg());
+
+            // save crawler state i.e. count of parsed posts to start with later:
+            CrawlerStateStorage.put(domain, offset);
+
             return;
         } else {
             throw new CrawlerException("Response from VK is null, something went wrong at all, crawler dead!");
+        }
+
+        // if offset is more or equals count of posts on the wall - stop task:
+        if (offset >= response.getCount()) {
+            log.info("Stop domain parsing:\"{}\", all post were processed!", domain);
+
+            // join current thread - allow to re-use to parse next domain:
+            Thread.currentThread().join();
         }
 
         // move offset and proceed recursion:
@@ -104,14 +125,27 @@ public class RecursiveCrawlerJob implements Runnable {
         parseWallWithOffset();
     }
 
-    private void saveToElasticSearch() {
-        // filter crawled result:
-        CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
+    private void saveToElasticSearch(boolean validateData) {
+        if (validateData) {
+            deleteAlreadySavedPostsFromTemporaryStorage();
+        }
 
+        // save to elastic Search:
+        log.info("Saving to Elastic Search {} documents", parsedPosts.size());
+        repository.saveAll(parsedPosts);
+
+        // clear temporary storage:
+        parsedPosts.clear();
+    }
+
+    private void deleteAlreadySavedPostsFromTemporaryStorage() {
+        // filter crawled result:
         List<WallPost> alreadySavedPosts = parsedPosts.stream()
+                // distinct if we had error and re-parsed offset:
+                .distinct()
                 // filter posts which we already know:
                 .filter(post -> repository.existsById(post.getId()))
-                // filter only not edited posts:
+                // filter only not edited posts/edited. but we know it:
                 .filter(post -> {
                     // if post didn't edited - skip:
                     if (post.getEdited() == null) return true;
@@ -125,12 +159,5 @@ public class RecursiveCrawlerJob implements Runnable {
 
         // remove what we already know from crawled result:
         parsedPosts.removeAll(alreadySavedPosts);
-
-        // save to elastic Search:
-        log.info("Saving to Elastic Search {} documents", parsedPosts.size());
-        repository.saveAll(parsedPosts);
-
-        // clear temporary storage:
-        parsedPosts.clear();
     }
 }
