@@ -18,7 +18,7 @@ public class TestController {
         taskOrchestrator.startRecursiveCrawlingJob(toParse);
     }
 
-    @PostMapping("/api")
+    @PostMapping("/api_user")
     public void schedule(@RequestBody StartCrawlingRequestDto request) {
         taskOrchestrator.startRecursiveCrawlingJob(request);
     }

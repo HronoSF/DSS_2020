@@ -13,7 +13,6 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.queries.wall.WallGetQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -28,19 +27,23 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
 
-    private RecursiveCrawledDataTransferObject.RecursiveCrawledDataTransferObjectBuilder template;
+    @Value("${vk.request.timeout}")
+    private String requestTimeout;
+
+    private RecursiveCrawledDataTransferObject.RecursiveCrawledDataTransferObjectBuilder queryTemplate;
 
     private final VkApiClient client;
+    private final WallPostMapper mapper;
     private final TaskScheduler scheduler;
     private final ServiceActor serviceActor;
+    private final ObjectMapper objectMapper;
+    private final CrawledPostRepository repository;
     private final ExecutorService executorService;
 
     @PostConstruct
-    public void buildDataObject(
-            @Autowired WallPostMapper mapper, @Autowired ObjectMapper objectMapper
-            , @Autowired CrawledPostRepository repository, @Value("${vk.request.timeout}") String requestTimeout) {
+    public void buildDataObject() {
         // build template data:
-        template = RecursiveCrawledDataTransferObject.builder()
+        queryTemplate = RecursiveCrawledDataTransferObject.builder()
                 .mapper(mapper)
                 .objectMapper(objectMapper)
                 .crawledPostRepository(repository)
@@ -59,10 +62,10 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
                             .domain(domain)
                             .count(100);
 
-                    template.query(query).domain(domain);
+                    queryTemplate.query(query).domain(domain);
 
                     // start parsing:
-                    scheduler.schedule(new RecursiveCrawlerJob(template.build()), new Date());
+                    scheduler.schedule(new RecursiveCrawlerJob(queryTemplate.build()), new Date());
                 }
         );
     }

@@ -91,11 +91,10 @@ public class RecursiveCrawlerJob implements Runnable {
                 Thread.currentThread().join();
             }
         } else if (response != null) {
-            // if response has vk api errors - log and:
+            // if response has vk api errors - log and stop:
             log.info("Stop domain parsing:\"{}\" with status code {}, reason \"{}\""
                     , domain, response.getError().getError_code(), response.getError().getError_msg());
-
-            throw new CrawlerException("Response from VK has errors: %s, there is no sense to continue!", dataTransfer.getObjectMapper().writeValueAsString(response.getError()));
+            return;
         } else {
             throw new CrawlerException("Response from VK is null, something went wrong at all, crawler dead!");
         }
