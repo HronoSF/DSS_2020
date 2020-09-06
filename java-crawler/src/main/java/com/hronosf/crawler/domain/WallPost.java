@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class WallPost {
 
     @Id
-    private Integer id;
+    private Long id;
 
     private String fromId;
 
