@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class RecursiveCrawledDataTransferObject {
+public class DataTransferObject {
 
     private final Integer offset;
     private final String domain;

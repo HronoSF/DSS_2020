@@ -1,7 +1,6 @@
 package com.hronosf.crawler;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
@@ -15,7 +14,7 @@ import java.util.concurrent.*;
 
 @EnableAsync
 @EnableScheduling
-@SpringBootApplication(exclude = TaskSchedulingAutoConfiguration.class)
+@SpringBootApplication(scanBasePackages = "com.hronosf.crawler", exclude = TaskSchedulingAutoConfiguration.class)
 public class CrawlerApplication {
 
     public static void main(String[] args) {
@@ -40,6 +39,7 @@ public class CrawlerApplication {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, false);
+        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         return mapper;
     }
 }

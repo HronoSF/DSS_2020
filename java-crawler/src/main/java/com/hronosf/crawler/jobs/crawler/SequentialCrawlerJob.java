@@ -1,13 +1,11 @@
-package com.hronosf.crawler.jobs;
+package com.hronosf.crawler.jobs.crawler;
 
 import com.hronosf.crawler.domain.WallPost;
-import com.hronosf.crawler.dto.ResponseDto;
+import com.hronosf.crawler.dto.Response;
 import com.hronosf.crawler.exceptions.CrawlerException;
 import com.hronosf.crawler.repository.CrawledPostRepository;
 import com.hronosf.crawler.util.CrawlerStateStorage;
-import com.hronosf.crawler.util.RecursiveCrawledDataTransferObject;
-import com.vk.api.sdk.exceptions.ClientException;
-import lombok.RequiredArgsConstructor;
+import com.hronosf.crawler.util.DataTransferObject;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,63 +14,77 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@RequiredArgsConstructor
 @SuppressWarnings("java:S1948")
-public class RecursiveSequentialCrawlerJob implements Runnable {
+public class SequentialCrawlerJob implements Runnable {
 
     private Integer offset = 0;
+    private final String domain;
+    private Integer postCount = 1;
     private int retryRecursionDepth = 0;
     private final List<WallPost> parsedPosts = new ArrayList<>();
+    private final DataTransferObject dataTransfer;
 
-    // constructor variables::
-    private final RecursiveCrawledDataTransferObject dataTransfer;
+    // constructor:
+    public SequentialCrawlerJob(DataTransferObject dataTransfer) {
+        this.dataTransfer = dataTransfer;
+        domain = dataTransfer.getDomain();
+    }
 
     @Override
+    @SneakyThrows
     public void run() {
-        parseWallWithOffset();
+        // start crawling:
+        while (offset < postCount) {
+            crawlWallWithOffset();
+        }
+
+        log.info("Stop parsing https://vk.com/{}, all post were processed!", domain);
+        CrawlerStateStorage.put(domain, 0);
+
+        // join current thread - allow to re-use it by WorkStealingPool to parse next domain:
+        Thread.currentThread().join();
     }
 
     @SneakyThrows
-    private void parseWallWithOffset() {
-        String domain = dataTransfer.getDomain();
-
-
-        // crawl new posts && start with saved offset if crawling were interrupted:
-        Integer offsetToStart = CrawlerStateStorage.getOffsetToStart(domain);
-        if (offsetToStart != null) {
-            // delete already saved posts:
-            deleteAlreadySavedPostsFromTemporaryStorage();
-
-            // if we have new posts - save to Es:
-            if (!parsedPosts.isEmpty()) {
-                // save new posts to Es:
-                saveToElasticSearch(false);
-
-                // move offset to position before interruption:
-                offset += offsetToStart + parsedPosts.size();
-
-                // clean up state:
-                CrawlerStateStorage.remove(domain);
-            }
-        }
-
-        // Trash hold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
+    private void crawlWallWithOffset() {
+        // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
         if (parsedPosts.size() >= 500) {
             saveToElasticSearch(true);
         }
 
+        // parse new posts if they are && start with saved offset if crawling were interrupted:
+        Integer offsetToStart = CrawlerStateStorage.getOffsetToStart(domain);
+        if (offsetToStart != null && !parsedPosts.isEmpty()) {
+            // delete already saved posts:
+            deleteAlreadySavedPostsFromTemporaryStorage();
+
+            // save new posts to Es:
+            saveToElasticSearch(false);
+
+            // move offset to position before interruption:
+            offset = 0;
+            offset += offsetToStart + parsedPosts.size();
+
+            // clean up state:
+            CrawlerStateStorage.remove(domain);
+        }
+
         // log start of process with work thread name:
-        log.info("Start domain \"{}\" parsing with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
-        ResponseDto response = null;
+        log.info("Start parsing https://vk.com/{} with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
+        Response response = null;
 
         try {
             // make response via VK API wall.get method:
             String content = dataTransfer.getQuery().offset(offset).executeAsString();
-            response = dataTransfer.getObjectMapper().readValue(content, ResponseDto.class);
+            response = dataTransfer.getObjectMapper().readValue(content, Response.class);
 
-        } catch (ClientException ex) {
+            // update post count on the wall:
+            if (!postCount.equals(response.getCount())) {
+                postCount = response.getCount();
+            }
+        } catch (Exception ex) {
             // catch and log any exception while proceeding:
-            log.info("Failed to parse response json with exception {} in domain \"{}\", offset : {}, sleep for {} and retrying. Attempt {}/3"
+            log.info("Failed to parse response with exception {} while crawling https://vk.com/{}, offset : {}, sleep for {} millis and retrying. Attempt {}/3"
                     , ex, domain, offset, dataTransfer.getRequestTimeout(), retryRecursionDepth);
 
             // sleep before retrying request:
@@ -83,25 +95,24 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
             // if depth too big - exit from recursion, rollback offset and proceed:
             if (retryRecursionDepth > 3) {
-                offset -= 100;
                 retryRecursionDepth = 0;
 
-                log.info("Exiting domain \"{}\" parsing recursion, rolling back offset to {}", domain, offset);
+                log.info("Exiting https://vk.com/{} parsing recursion, rolling back offset to {}", domain, offset);
                 return;
             }
 
             // try to parse again:
-            parseWallWithOffset();
+            crawlWallWithOffset();
         }
 
         // Parse response:
-        if (response != null && response.getError() == null) {
+        if (isResponsePresentAndNoErrorsReturned(response) && isResponseItemsPresent(response)) {
             // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
             response.getItems().forEach(item -> parsedPosts.add(dataTransfer.getMapper().fromDto(item)));
 
-        } else if (response != null) {
+        } else if (isResponsePresentAndErrorsReturned(response)) {
             // if response has vk api errors - log and stop:
-            log.info("Stop domain parsing \"{}\" with status code {}, reason \"{}\""
+            log.info("Stop https://vk.com/{} parsing with status code {}, reason \"{}\""
                     , domain, response.getError().getError_code(), response.getError().getError_msg());
 
             // save crawler state i.e. count of parsed posts to start with later:
@@ -109,20 +120,13 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
             return;
         } else {
-            throw new CrawlerException("Response from VK is null, something went wrong at all, crawler dead!");
+            // save crawler state i.e. count of parsed posts to start with later:
+            CrawlerStateStorage.put(domain, offset);
+            throw new CrawlerException("Response is defected, something went wrong at all!");
         }
 
-        // if offset is more or equals count of posts on the wall - stop task:
-        if (offset >= response.getCount()) {
-            log.info("Stop domain parsing \"{}\", all post were processed!", domain);
-
-            // join current thread - allow to re-use to parse next domain:
-            Thread.currentThread().join();
-        }
-
-        // move offset and proceed recursion:
+        // move offset:
         offset += 100;
-        parseWallWithOffset();
     }
 
     private void saveToElasticSearch(boolean validateData) {
@@ -163,5 +167,18 @@ public class RecursiveSequentialCrawlerJob implements Runnable {
 
         // remove what we already know from crawled result:
         parsedPosts.removeAll(alreadySavedPosts);
+    }
+
+    private boolean isResponsePresentAndNoErrorsReturned(Response response) {
+        return response != null && response.getError() == null;
+    }
+
+    private boolean isResponsePresentAndErrorsReturned(Response response) {
+        return response != null && response.getError() != null;
+
+    }
+
+    private boolean isResponseItemsPresent(Response response) {
+        return response.getItems() != null && !response.getItems().isEmpty();
     }
 }
