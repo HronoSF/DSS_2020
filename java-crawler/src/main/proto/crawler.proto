@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.hronosf.crawler.controller";
+option java_outer_classname = "CrawlerServiceProto";
+
+package com.hronosf.crawler.controller;
+
+service Crawler {
+  // Start Crawling
+  rpc startCrawling (StartParsingRequest) returns (EmptyResponse){}
+}
+
+message StartParsingRequest{
+  repeated string toParse = 1;
+}
+
+message EmptyResponse{}
