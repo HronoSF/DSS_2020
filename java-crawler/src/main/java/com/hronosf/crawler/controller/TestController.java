@@ -1,5 +1,6 @@
 package com.hronosf.crawler.controller;
 
+import com.hronosf.crawler.dto.CrawlingAsUserActorRequestDto;
 import com.hronosf.crawler.services.TaskOrchestrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +13,13 @@ public class TestController {
 
     private final TaskOrchestrationService taskOrchestrator;
 
-    @PostMapping("/api")
+    @PostMapping("/service_actor")
     public void schedule(@RequestBody List<String> toParse) {
         taskOrchestrator.startRecursiveCrawlingJob(toParse);
+    }
+
+    @PostMapping("/user_actor")
+    public void startCrawling(@RequestBody CrawlingAsUserActorRequestDto request) {
+
     }
 }

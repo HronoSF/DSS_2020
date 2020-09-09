@@ -1,15 +1,15 @@
 package com.hronosf.crawler.dto.vk;
 
-import com.vk.api.sdk.objects.wall.WallpostFull;
-import lombok.Data;
+import com.hronosf.crawler.domain.WallPost;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
 @NoArgsConstructor
 public class Response {
 
     private Integer count;
-    private List<WallpostFull> items;
+    private List<WallPost> items;
 }

@@ -1,9 +1,9 @@
 package com.hronosf.crawler.dto.vk;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@ToString
 @NoArgsConstructor
 public class Error {
 

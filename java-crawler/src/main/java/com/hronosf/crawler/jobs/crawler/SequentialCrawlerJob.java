@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.vk.Response;
 import com.hronosf.crawler.dto.vk.VkResponseDto;
-import com.hronosf.crawler.mappers.WallPostMapper;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
 import com.hronosf.crawler.util.BeanUtilService;
 import com.hronosf.crawler.util.CrawlerStateStorage;
@@ -33,7 +32,6 @@ public class SequentialCrawlerJob implements Runnable {
 
     // "autowired" beans:
     private final WallGetQuery query;
-    private final WallPostMapper mapper;
     private final ObjectMapper objectMapper;
     private final ElasticSearchWrapperService elasticSearchWrapperService;
 
@@ -43,7 +41,6 @@ public class SequentialCrawlerJob implements Runnable {
         this.timeout = timeout;
 
         // "autowire" beans:
-        mapper = BeanUtilService.getBean(WallPostMapper.class);
         objectMapper = BeanUtilService.getBean(ObjectMapper.class);
         elasticSearchWrapperService = BeanUtilService.getBean(ElasticSearchWrapperService.class);
 
@@ -51,7 +48,7 @@ public class SequentialCrawlerJob implements Runnable {
         query = BeanUtilService.getBean(VkApiClient.class)
                 .wall()
                 .get(BeanUtilService.getBean(ServiceActor.class))
-                .domain(domain).count(100);
+                .domain(domain).count(10);
     }
 
     @Override
@@ -100,7 +97,7 @@ public class SequentialCrawlerJob implements Runnable {
             if (isResponseItemsPresent(vkRestResponse)) {
                 // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
                 Response response = vkRestResponse.getResponse();
-                response.getItems().forEach(item -> parsedPosts.add(mapper.fromDto(item)));
+                parsedPosts.addAll(response.getItems());
 
                 // update post count on the wall:
                 Integer postCountOnWall = response.getCount();

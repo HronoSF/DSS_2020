@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class StartCrawlingRequestDto {
+public class CrawlingAsUserActorRequestDto {
 
     private Integer userId;
     private String accessToken;

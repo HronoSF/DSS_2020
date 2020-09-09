@@ -1,5 +1,6 @@
 package com.hronosf.crawler.domain;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -11,17 +12,20 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class WallPost {
 
     @Id
-    private Long id;
+    private Integer id;
 
-    private String fromId;
+    @JsonAlias("from_id")
+    private Integer fromId;
 
+    @JsonAlias("owner_id")
     private Integer ownerId;
 
-    private String signerId;
+    @JsonAlias("signed_id")
+    private Integer signerId;
 
     private String text;
 
     private Integer edited;
 
-    private Long date;
+    private Integer date;
 }
