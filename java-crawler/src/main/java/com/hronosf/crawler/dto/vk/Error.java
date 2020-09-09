@@ -1,11 +1,11 @@
-package com.hronosf.crawler.dto;
+package com.hronosf.crawler.dto.vk;
 
 import lombok.*;
 
 @Getter
 @ToString
 @NoArgsConstructor
-public class ErrorDto {
+public class Error {
 
     private String error_code;
     private String error_msg;

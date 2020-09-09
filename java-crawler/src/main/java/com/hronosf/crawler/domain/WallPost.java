@@ -1,12 +1,12 @@
 package com.hronosf.crawler.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode
 @Document(indexName = "wall_posts")
 public class WallPost {
 

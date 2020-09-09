@@ -1,69 +1,91 @@
 package com.hronosf.crawler.jobs.crawler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
-import com.hronosf.crawler.dto.Response;
+import com.hronosf.crawler.dto.vk.Response;
+import com.hronosf.crawler.dto.vk.VkResponseDto;
 import com.hronosf.crawler.exceptions.CrawlerException;
-import com.hronosf.crawler.repository.CrawledPostRepository;
+import com.hronosf.crawler.mappers.WallPostMapper;
+import com.hronosf.crawler.services.ElasticSearchWrapperService;
+import com.hronosf.crawler.util.BeanUtilService;
 import com.hronosf.crawler.util.CrawlerStateStorage;
-import com.hronosf.crawler.util.DataTransferObject;
+import com.vk.api.sdk.client.VkApiClient;
+import com.vk.api.sdk.client.actors.ServiceActor;
+import com.vk.api.sdk.queries.wall.WallGetQuery;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @SuppressWarnings("java:S1948")
 public class SequentialCrawlerJob implements Runnable {
 
-    private Integer offset = 0;
     private final String domain;
-    private Integer postCount = 1;
-    private int retryRecursionDepth = 0;
+    private final Integer timeout;
+
+    // stuff fields:
+    private int offset = 0;
+    private int wallPostCount = 1;
+    private int retryAttemptCount = 0;
+
+    // temporary crawling result storage:
     private final List<WallPost> parsedPosts = new ArrayList<>();
-    private final DataTransferObject dataTransfer;
+
+    // "autowired" beans:
+    private final WallGetQuery query;
+    private final WallPostMapper mapper;
+    private final ObjectMapper objectMapper;
+    private final ElasticSearchWrapperService elasticSearchWrapperService;
 
     // constructor:
-    public SequentialCrawlerJob(DataTransferObject dataTransfer) {
-        this.dataTransfer = dataTransfer;
-        domain = dataTransfer.getDomain();
+    public SequentialCrawlerJob(String domain, Integer timeout) {
+        this.domain = domain;
+        this.timeout = timeout;
+
+        // "autowire" beans:
+        mapper = BeanUtilService.getBean(WallPostMapper.class);
+        objectMapper = BeanUtilService.getBean(ObjectMapper.class);
+        elasticSearchWrapperService = BeanUtilService.getBean(ElasticSearchWrapperService.class);
+
+        // build query:
+        query = BeanUtilService.getBean(VkApiClient.class)
+                .wall()
+                .get(BeanUtilService.getBean(ServiceActor.class))
+                .domain(domain).count(100);
     }
 
     @Override
     @SneakyThrows
     public void run() {
         // start crawling:
-        while (offset < postCount) {
+        while (offset < wallPostCount) {
             crawlWallWithOffset();
         }
 
         log.info("Stop parsing https://vk.com/{}, all post were processed!", domain);
-        CrawlerStateStorage.put(domain, 0);
 
         // join current thread - allow to re-use it by WorkStealingPool to parse next domain:
         Thread.currentThread().join();
     }
 
-    @SneakyThrows
-    private void crawlWallWithOffset() {
+
+    private void crawlWallWithOffset() throws CrawlerException, InterruptedException {
         // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
         if (parsedPosts.size() >= 500) {
-            saveToElasticSearch(true);
+            saveToElasticSearch();
         }
 
         // parse new posts if they are && start with saved offset if crawling were interrupted:
         Integer offsetToStart = CrawlerStateStorage.getOffsetToStart(domain);
         if (offsetToStart != null && !parsedPosts.isEmpty()) {
-            // delete already saved posts:
-            deleteAlreadySavedPostsFromTemporaryStorage();
-
             // save new posts to Es:
-            saveToElasticSearch(false);
+            int newPostCount = saveToElasticSearch();
 
             // move offset to position before interruption:
             offset = 0;
-            offset += offsetToStart + parsedPosts.size();
+            offset += offsetToStart + newPostCount;
 
             // clean up state:
             CrawlerStateStorage.remove(domain);
@@ -71,33 +93,32 @@ public class SequentialCrawlerJob implements Runnable {
 
         // log start of process with work thread name:
         log.info("Start parsing https://vk.com/{} with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
-        Response response = null;
+        VkResponseDto vkRestResponse = null;
 
         try {
             // make response via VK API wall.get method:
-            String content = dataTransfer.getQuery().offset(offset).executeAsString();
-            response = dataTransfer.getObjectMapper().readValue(content, Response.class);
-
-            // update post count on the wall:
-            if (!postCount.equals(response.getCount())) {
-                postCount = response.getCount();
-            }
+            String content = query.offset(offset).executeAsString();
+            vkRestResponse = objectMapper.readValue(content, VkResponseDto.class);
         } catch (Exception ex) {
             // catch and log any exception while proceeding:
-            log.info("Failed to parse response with exception {} while crawling https://vk.com/{}, offset : {}, sleep for {} millis and retrying. Attempt {}/3"
-                    , ex, domain, offset, dataTransfer.getRequestTimeout(), retryRecursionDepth);
+            log.error("Failed to parse response while crawling https://vk.com/{} with exception: \n{},\n offset : {}, sleep for {} millis and retrying.\n Attempt {}/3"
+                    , domain, ex, offset, timeout, retryAttemptCount);
 
             // sleep before retrying request:
-            Thread.sleep(dataTransfer.getRequestTimeout());
+            Thread.sleep(timeout);
 
             // increment recursion depth trying to crawl offset:
-            retryRecursionDepth++;
+            retryAttemptCount++;
 
             // if depth too big - exit from recursion, rollback offset and proceed:
-            if (retryRecursionDepth > 3) {
-                retryRecursionDepth = 0;
+            if (retryAttemptCount > 3) {
+                retryAttemptCount = 0;
 
-                log.info("Exiting https://vk.com/{} parsing recursion, rolling back offset to {}", domain, offset);
+                log.info("Exiting https://vk.com/{} parsing recursion, offset to {}", domain, offset);
+
+                // save all that was parsed on current moment to DB:
+                saveToElasticSearch();
+
                 return;
             }
 
@@ -106,22 +127,31 @@ public class SequentialCrawlerJob implements Runnable {
         }
 
         // Parse response:
-        if (isResponsePresentAndNoErrorsReturned(response) && isResponseItemsPresent(response)) {
+        if (isResponseItemsPresent(vkRestResponse)) {
             // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
-            response.getItems().forEach(item -> parsedPosts.add(dataTransfer.getMapper().fromDto(item)));
+            Response response = vkRestResponse.getResponse();
+            response.getItems().forEach(item -> parsedPosts.add(mapper.fromDto(item)));
 
-        } else if (isResponsePresentAndErrorsReturned(response)) {
+            // update post count on the wall:
+            Integer postCountOnWall = response.getCount();
+            wallPostCount = (wallPostCount != postCountOnWall) ? postCountOnWall : wallPostCount;
+
+        } else if (isResponsePresentButErrorsReturned(vkRestResponse)) {
             // if response has vk api errors - log and stop:
             log.info("Stop https://vk.com/{} parsing with status code {}, reason \"{}\""
-                    , domain, response.getError().getError_code(), response.getError().getError_msg());
+                    , domain, vkRestResponse.getError().getError_code(), vkRestResponse.getError().getError_msg());
 
             // save crawler state i.e. count of parsed posts to start with later:
             CrawlerStateStorage.put(domain, offset);
+
+            // save all that was parsed on current moment to DB:
+            saveToElasticSearch();
 
             return;
         } else {
             // save crawler state i.e. count of parsed posts to start with later:
             CrawlerStateStorage.put(domain, offset);
+
             throw new CrawlerException("Response is defected, something went wrong at all!");
         }
 
@@ -129,56 +159,27 @@ public class SequentialCrawlerJob implements Runnable {
         offset += 100;
     }
 
-    private void saveToElasticSearch(boolean validateData) {
-        CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
+    private int saveToElasticSearch() {
+        // save new posts:
+        int newPostsCount = 0;
 
-        if (validateData) {
-            deleteAlreadySavedPostsFromTemporaryStorage();
+        try {
+            newPostsCount = elasticSearchWrapperService.saveOnlyNewOrChangedPosts(parsedPosts);
+        } catch (Exception ex) {
+            log.error("Data Base error occurred while saving crawled posts:\n {}", ex.getMessage());
         }
-
-        // save to elastic Search:
-        log.info("Saving to Elastic Search {} documents", parsedPosts.size());
-        repository.saveAll(parsedPosts);
 
         // clear temporary storage:
         parsedPosts.clear();
+
+        return newPostsCount;
     }
 
-    private void deleteAlreadySavedPostsFromTemporaryStorage() {
-        CrawledPostRepository repository = dataTransfer.getCrawledPostRepository();
-
-        // filter crawled result:
-        List<WallPost> alreadySavedPosts = parsedPosts.stream()
-                // distinct if we had error and re-parsed offset:
-                .distinct()
-                // filter posts which we already know:
-                .filter(post -> repository.existsById(post.getId()))
-                // filter only not edited posts/edited. but we know it:
-                .filter(post -> {
-                    // if post didn't edited - skip:
-                    if (post.getEdited() == null) return true;
-
-                    // if post edited && edit date same as we known:
-                    return post.getEdited() != null
-                            // ignore "isPresent" i.e. previously we filtered to stay only existing in Es documents => it's present 100%:
-                            && repository.findById(post.getId()).get().getEdited().equals(post.getEdited());
-                })
-                .collect(Collectors.toList());
-
-        // remove what we already know from crawled result:
-        parsedPosts.removeAll(alreadySavedPosts);
+    private boolean isResponsePresentButErrorsReturned(VkResponseDto vkResponse) {
+        return vkResponse != null && vkResponse.getError() != null;
     }
 
-    private boolean isResponsePresentAndNoErrorsReturned(Response response) {
-        return response != null && response.getError() == null;
-    }
-
-    private boolean isResponsePresentAndErrorsReturned(Response response) {
-        return response != null && response.getError() != null;
-
-    }
-
-    private boolean isResponseItemsPresent(Response response) {
-        return response.getItems() != null && !response.getItems().isEmpty();
+    private boolean isResponseItemsPresent(VkResponseDto vkResponse) {
+        return vkResponse != null && vkResponse.getResponse().getItems() != null && !vkResponse.getResponse().getItems().isEmpty();
     }
 }

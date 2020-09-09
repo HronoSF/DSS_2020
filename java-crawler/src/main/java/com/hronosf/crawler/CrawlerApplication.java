@@ -40,6 +40,7 @@ public class CrawlerApplication {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, false);
         mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+
         return mapper;
     }
 }
