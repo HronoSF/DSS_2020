@@ -25,7 +25,7 @@ public class ElasticSearchWrapperServiceImpl implements ElasticSearchWrapperServ
         String ids = parsedPosts.stream().map(post -> post.getId().toString()).collect(Collectors.joining(","));
 
         // query ES to get existing post by id set:
-        Map<Integer, WallPost> existedPosts = repository.findAllById(ids, PageRequest.of(0, 100))
+        Map<Integer, WallPost> existedPosts = repository.findAllById(ids, PageRequest.of(0, parsedPosts.size()))
                 .getContent().stream()
                 .collect(Collectors.toMap(WallPost::getId, Function.identity()));
 

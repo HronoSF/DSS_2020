@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+//TODO: write with Vk api execute if there are time left
 public class SequentialCrawlerJob implements Runnable {
 
     private final String domain;
@@ -48,7 +49,8 @@ public class SequentialCrawlerJob implements Runnable {
         query = BeanUtilService.getBean(VkApiClient.class)
                 .wall()
                 .get(BeanUtilService.getBean(ServiceActor.class))
-                .domain(domain).count(10);
+                .domain(domain)
+                .count(100);
     }
 
     @Override
