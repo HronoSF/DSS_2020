@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.vk.Response;
 import com.hronosf.crawler.dto.vk.VkResponseDto;
-import com.hronosf.crawler.exceptions.CrawlerException;
 import com.hronosf.crawler.mappers.WallPostMapper;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
 import com.hronosf.crawler.util.BeanUtilService;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@SuppressWarnings("java:S1948")
 public class SequentialCrawlerJob implements Runnable {
 
     private final String domain;
@@ -28,7 +26,7 @@ public class SequentialCrawlerJob implements Runnable {
     // stuff fields:
     private int offset = 0;
     private int wallPostCount = 1;
-    private int retryAttemptCount = 0;
+    private int retryAttemptCount = 1;
 
     // temporary crawling result storage:
     private final List<WallPost> parsedPosts = new ArrayList<>();
@@ -70,8 +68,7 @@ public class SequentialCrawlerJob implements Runnable {
         Thread.currentThread().join();
     }
 
-
-    private void crawlWallWithOffset() throws CrawlerException, InterruptedException {
+    private void crawlWallWithOffset() throws InterruptedException {
         // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
         if (parsedPosts.size() >= 500) {
             saveToElasticSearch();
@@ -93,70 +90,64 @@ public class SequentialCrawlerJob implements Runnable {
 
         // log start of process with work thread name:
         log.info("Start parsing https://vk.com/{} with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
-        VkResponseDto vkRestResponse = null;
 
         try {
             // make response via VK API wall.get method:
             String content = query.offset(offset).executeAsString();
-            vkRestResponse = objectMapper.readValue(content, VkResponseDto.class);
+            VkResponseDto vkRestResponse = objectMapper.readValue(content, VkResponseDto.class);
+
+            // Parse response:
+            if (isResponseItemsPresent(vkRestResponse)) {
+                // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
+                Response response = vkRestResponse.getResponse();
+                response.getItems().forEach(item -> parsedPosts.add(mapper.fromDto(item)));
+
+                // update post count on the wall:
+                Integer postCountOnWall = response.getCount();
+                wallPostCount = (wallPostCount != postCountOnWall) ? postCountOnWall : wallPostCount;
+
+            } else if (isResponsePresentButErrorsReturned(vkRestResponse)) {
+                // if response has vk api errors - log and stop:
+                log.info("Stop https://vk.com/{} parsing with status code {}, reason \"{}\""
+                        , domain, vkRestResponse.getError().getError_code(), vkRestResponse.getError().getError_msg());
+
+                // save crawler state i.e. count of parsed posts to start with later:
+                CrawlerStateStorage.put(domain, offset);
+
+                // save all that was parsed on current moment to DB:
+                saveToElasticSearch();
+                return;
+            } else {
+                // save crawler state i.e. count of parsed posts to start with later:
+                CrawlerStateStorage.put(domain, offset);
+
+                return;
+            }
+
+            // move offset:
+            offset += 100;
         } catch (Exception ex) {
             // catch and log any exception while proceeding:
             log.error("Failed to parse response while crawling https://vk.com/{} with exception: \n{},\n offset : {}, sleep for {} millis and retrying.\n Attempt {}/3"
                     , domain, ex, offset, timeout, retryAttemptCount);
 
-            // sleep before retrying request:
-            Thread.sleep(timeout);
+            // if attempt count <3 - trying again:
+            if (retryAttemptCount < 3) {
+                // increment recursion depth trying to crawl offset:
+                retryAttemptCount++;
 
-            // increment recursion depth trying to crawl offset:
-            retryAttemptCount++;
-
-            // if depth too big - exit from recursion, rollback offset and proceed:
-            if (retryAttemptCount > 3) {
+                // sleep before retrying request:
+                Thread.sleep(timeout);
+            } else {
+                // clear retry attempts count:
                 retryAttemptCount = 0;
 
-                log.info("Exiting https://vk.com/{} parsing recursion, offset to {}", domain, offset);
+                log.info("Skipping https://vk.com/{} broken offset {}", domain, offset);
 
-                // save all that was parsed on current moment to DB:
-                saveToElasticSearch();
-
-                return;
+                // move offset:
+                offset += 100;
             }
-
-            // try to parse again:
-            crawlWallWithOffset();
         }
-
-        // Parse response:
-        if (isResponseItemsPresent(vkRestResponse)) {
-            // map from WallPostFull.java (DTO which contains too much unused info) to Elastic Search entity - CrawledPost.java:
-            Response response = vkRestResponse.getResponse();
-            response.getItems().forEach(item -> parsedPosts.add(mapper.fromDto(item)));
-
-            // update post count on the wall:
-            Integer postCountOnWall = response.getCount();
-            wallPostCount = (wallPostCount != postCountOnWall) ? postCountOnWall : wallPostCount;
-
-        } else if (isResponsePresentButErrorsReturned(vkRestResponse)) {
-            // if response has vk api errors - log and stop:
-            log.info("Stop https://vk.com/{} parsing with status code {}, reason \"{}\""
-                    , domain, vkRestResponse.getError().getError_code(), vkRestResponse.getError().getError_msg());
-
-            // save crawler state i.e. count of parsed posts to start with later:
-            CrawlerStateStorage.put(domain, offset);
-
-            // save all that was parsed on current moment to DB:
-            saveToElasticSearch();
-
-            return;
-        } else {
-            // save crawler state i.e. count of parsed posts to start with later:
-            CrawlerStateStorage.put(domain, offset);
-
-            throw new CrawlerException("Response is defected, something went wrong at all!");
-        }
-
-        // move offset:
-        offset += 100;
     }
 
     private int saveToElasticSearch() {
