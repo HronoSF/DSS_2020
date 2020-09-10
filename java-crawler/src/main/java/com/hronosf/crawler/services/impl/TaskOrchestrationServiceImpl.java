@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -23,22 +23,28 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
     private final Map<String, Future<?>> crawlerTasks = new ConcurrentHashMap<>();
 
     @Override
-    public void startRecursiveCrawlingJob(List<String> wallsToParse) {
+    public Map<String, String> startRecursiveCrawlingJob(List<String> wallsToParse) {
+        Map<String, String> domainToJobStatus = new HashMap<>();
         crawlerTasks.forEach((domain, future) -> {
 
             if (!wallsToParse.contains(domain)) {
                 log.info("Interrupting crawling of https://vk.com/{}", domain);
                 future.cancel(true);
 
+                domainToJobStatus.put(domain, "Crawling job start " + ZonedDateTime.now());
+
             } else if (!future.isDone() && !future.isCancelled()) {
 
                 log.info("Crawling https://vk.com/{} already running, ignore it's crawling", domain);
                 wallsToParse.remove(domain);
+
+                domainToJobStatus.put(domain, "Crawling job already running " + ZonedDateTime.now());
             }
 
         });
 
         wallsToParse.forEach(this::startCrawling);
+        return domainToJobStatus;
     }
 
     @Override

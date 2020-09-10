@@ -7,12 +7,13 @@ option java_outer_classname = "CrawlerServiceProto";
 package com.hronosf.crawler.controller;
 
 service Crawler {
-  // Start Crawling
-  rpc startCrawling (StartParsingRequest) returns (EmptyResponse){}
+  rpc startCrawling (StartParsingRequest) returns (CrawlerJobStatus){}
 }
 
 message StartParsingRequest{
   repeated string toParse = 1;
 }
 
-message EmptyResponse{}
+message CrawlerJobStatus{
+  map<string, string> domainToStatus = 1;
+}

@@ -1,10 +1,11 @@
 package com.hronosf.crawler.services;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TaskOrchestrationService {
 
-    void startRecursiveCrawlingJob(List<String> wallsToParse);
+    Map<String, String> startRecursiveCrawlingJob(List<String> wallsToParse);
 
     void relaunchCrawlerFinishedTask();
 }
