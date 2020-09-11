@@ -1,27 +1,30 @@
 package com.hronosf.crawler.jobs.crawler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.vk.Response;
 import com.hronosf.crawler.dto.vk.VkResponseDto;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
-import com.hronosf.crawler.util.BeanUtilService;
-import com.hronosf.crawler.util.CrawlerStateStorage;
+import com.hronosf.crawler.util.*;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
+import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.queries.wall.WallGetQuery;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 //TODO: write with Vk api execute if there are time left
-public class SequentialCrawlerJob implements Runnable {
+public class SequentialCrawlerJob implements CancelableRunnable {
 
     private final String domain;
     private final Integer timeout;
+    private final MutableBoolean bool = new MutableBoolean();
 
     // stuff fields:
     private int offset = 0;
@@ -57,14 +60,12 @@ public class SequentialCrawlerJob implements Runnable {
     @SneakyThrows
     public void run() {
         // start crawling:
-        while (offset < wallPostCount) {
+        bool.setTrue();
+        while (bool.booleanValue() && offset < wallPostCount) {
             crawlWallWithOffset();
         }
 
-        log.info("Stop parsing https://vk.com/{}, all post were processed!", domain);
-
-        // join current thread - allow to re-use it by WorkStealingPool to parse next domain:
-        Thread.currentThread().join();
+        log.info("Stop parsing https://vk.com/{}", domain);
     }
 
     private void crawlWallWithOffset() throws InterruptedException {
@@ -125,9 +126,9 @@ public class SequentialCrawlerJob implements Runnable {
 
             // move offset:
             offset += 100;
-        } catch (Exception ex) {
+        } catch (ClientException ex) {
             // catch and log any exception while proceeding:
-            log.error("Failed to parse response while crawling https://vk.com/{} with exception: \n{},\n offset : {}, sleep for {} millis and retrying.\n Attempt {}/3"
+            log.error("Failed to request while crawling https://vk.com/{} with exception: \n{},\n offset : {}, sleep for {} millis and retrying.\n Attempt {}/3"
                     , domain, ex, offset, timeout, retryAttemptCount);
 
             // if attempt count <3 - trying again:
@@ -146,7 +147,14 @@ public class SequentialCrawlerJob implements Runnable {
                 // move offset:
                 offset += 100;
             }
+        } catch (JsonProcessingException ex) {
+            log.error("Unable to map response to java object because of:\n", ex);
         }
+    }
+
+    @Override
+    public void cancel() {
+        bool.setFalse();
     }
 
     private int saveToElasticSearch() {

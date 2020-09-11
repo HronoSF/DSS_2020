@@ -2,6 +2,7 @@ package com.hronosf.crawler.services.impl;
 
 import com.hronosf.crawler.jobs.crawler.SequentialCrawlerJob;
 import com.hronosf.crawler.services.TaskOrchestrationService;
+import com.hronosf.crawler.util.CrawlerTaskInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,39 +21,44 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
     private String requestTimeout;
 
     private final ExecutorService executorService;
-    private final Map<String, Future<?>> crawlerTasks = new ConcurrentHashMap<>();
+    private final Map<String, CrawlerTaskInfo> crawlerTasks = new ConcurrentHashMap<>();
 
     @Override
     public Map<String, String> startRecursiveCrawlingJob(List<String> wallsToParse) {
-        Map<String, String> domainToJobStatus = new HashMap<>();
-        crawlerTasks.forEach((domain, future) -> {
+        Map<String, String> crawlingJobsStatuses = new HashMap<>();
+
+        // stop crawling if it's running && check is any of passed domains already parsing, if true - not interrupt them:
+        crawlerTasks.forEach((domain, taskInfo) -> {
 
             if (!wallsToParse.contains(domain)) {
                 log.info("Interrupting crawling of https://vk.com/{}", domain);
-                future.cancel(true);
+                taskInfo.getRunnable().cancel();
 
-                domainToJobStatus.put(domain, "Crawling job start " + ZonedDateTime.now());
+                crawlingJobsStatuses.put(domain, "Crawling job interrupted at " + ZonedDateTime.now());
 
-            } else if (!future.isDone() && !future.isCancelled()) {
-
-                log.info("Crawling https://vk.com/{} already running, ignore it's crawling", domain);
+            } else if (!taskInfo.getFuture().isDone() && !taskInfo.getFuture().isCancelled()) {
+                log.info("Crawling https://vk.com/{} already running, ignore it", domain);
                 wallsToParse.remove(domain);
 
-                domainToJobStatus.put(domain, "Crawling job already running " + ZonedDateTime.now());
+                crawlingJobsStatuses.put(domain, "Crawling job already running" + ZonedDateTime.now());
             }
-
         });
 
-        wallsToParse.forEach(this::startCrawling);
-        return domainToJobStatus;
+        // start crawling:
+        wallsToParse.forEach(wall -> {
+            crawlingJobsStatuses.put(wall, "Crawling job started at " + ZonedDateTime.now());
+            startCrawling(wall);
+        });
+
+        return crawlingJobsStatuses;
     }
 
     @Override
     public void relaunchCrawlerFinishedTask() {
         log.info("Checking for relaunch crawler jobs:");
-        crawlerTasks.forEach((domain, future) -> {
+        crawlerTasks.forEach((domain, taskInfo) -> {
 
-            if (future.isDone() || future.isCancelled()) {
+            if (taskInfo.getFuture().isDone() || taskInfo.getFuture().isCancelled()) {
                 log.info("Re-launch crawling https://vk.com/{}", domain);
                 startCrawling(domain);
             }
@@ -61,8 +67,13 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
     }
 
     private void startCrawling(String domain) {
+        // create crawling cancelable runnable job:
+        SequentialCrawlerJob cancelableRunnable = new SequentialCrawlerJob(domain, Integer.parseInt(requestTimeout));
+
         // submit crawler task to Executor Service with WorkStealingThreadPool:
-        Future<?> future = executorService.submit(new SequentialCrawlerJob(domain, Integer.parseInt(requestTimeout)));
-        crawlerTasks.put(domain, future);
+        Future<?> future = executorService.submit(cancelableRunnable);
+
+        // save info about started job:
+        crawlerTasks.put(domain, new CrawlerTaskInfo(future, cancelableRunnable));
     }
 }

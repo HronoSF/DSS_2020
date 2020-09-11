@@ -16,14 +16,15 @@ public class CrawlerGrpcServiceImpl extends com.hronosf.crawler.controller.Crawl
     @Override
     public void startCrawling(com.hronosf.crawler.controller.StartParsingRequest request, StreamObserver<com.hronosf.crawler.controller.CrawlerJobStatus> responseObserver) {
         // start crawling:
-        Map<String, String> domainToStatus = taskOrchestrationService.startRecursiveCrawlingJob(request.getToParseList());
+        Map<String, String> crawlingJobsStatuses = taskOrchestrationService.startRecursiveCrawlingJob(request.getToParseList());
 
         // build response:
         com.hronosf.crawler.controller.CrawlerJobStatus response = com.hronosf.crawler.controller.CrawlerJobStatus.newBuilder()
-                .putAllDomainToStatus(domainToStatus)
+                .putAllDomainToStatus(crawlingJobsStatuses)
                 .build();
 
         // return response:
         responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }
