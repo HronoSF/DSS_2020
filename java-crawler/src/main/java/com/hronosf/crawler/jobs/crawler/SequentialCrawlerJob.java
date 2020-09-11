@@ -1,12 +1,12 @@
 package com.hronosf.crawler.jobs.crawler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.vk.Response;
 import com.hronosf.crawler.dto.vk.VkResponseDto;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
-import com.hronosf.crawler.util.*;
+import com.hronosf.crawler.util.BeanUtilService;
+import com.hronosf.crawler.util.CrawlerStateStorage;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -147,8 +147,8 @@ public class SequentialCrawlerJob implements CancelableRunnable {
                 // move offset:
                 offset += 100;
             }
-        } catch (JsonProcessingException ex) {
-            log.error("Unable to map response to java object because of:\n", ex);
+        } catch (Exception ex) {
+            log.info("Exception occurred while crawling https://vk.com/{}, offset {}", domain, offset);
         }
     }
 
