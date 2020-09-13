@@ -8,7 +8,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "proxy": "lcp --proxyUrl https://oauth.vk.com"
+    "proxy": "lcp --proxyUrl https://oauth.vk.com",
+    "compile-proto": "./node_modules/protoc/protoc/bin/protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --js_out=import_style=commonjs,binary:src/app/proto-gen --ts_out=service=grpc-web:src/app/proto-gen -I ../java-crawler/src/main/proto/ ../java-crawler/src/main/proto/*.proto",
+    "inst": "npm install && npm run compile-proto"
   },
   "private": true,
   "dependencies": {
@@ -22,9 +24,14 @@
     "@angular/platform-browser": "~8.2.14",
     "@angular/platform-browser-dynamic": "~8.2.14",
     "@angular/router": "~8.2.14",
+    "@improbable-eng/grpc-web": "^0.13.0",
+    "@types/google-protobuf": "^3.7.3",
+    "google-protobuf": "^3.13.0",
     "local-cors-proxy": "^1.1.0",
     "ngx-webstorage-service": "^4.1.0",
+    "protoc": "^1.0.4",
     "rxjs": "~6.4.0",
+    "ts-protoc-gen": "^0.13.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
