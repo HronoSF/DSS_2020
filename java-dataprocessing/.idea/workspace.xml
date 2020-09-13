@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="02538201-68c0-4e49-bce2-c09208c4724a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../java-crawler/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../java-crawler/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/configuration/EsConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/configuration/EsConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/domain/WallPost.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/domain/WallPost.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/jobs/crawler/SequentialCrawlerJob.java" beforeDir="false" afterPath="$PROJECT_DIR$/../java-crawler/src/main/java/com/hronosf/crawler/jobs/crawler/SequentialCrawlerJob.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../java-crawler/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../java-crawler/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.apache.spark:spark-core_2.11:2.0.0" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.elasticsearch:elasticsearch-spark-20_2.11:7.6.2" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-json:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-tomcat:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="data-processing" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
+                <item name="org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+                <item name="org.springframework:spring-webmvc:5.2.8.RELEASE" type="b3323d55:ExternalSystemViewDefaultContributor$DependencyExternalSystemNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="C:\Program Files\Apps\IntelliJ IDEA\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1hS6W8pT4OvT3yYe0F899uoZBmc" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../java-data-processing" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DataprocessingApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="dataprocessing.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.hronosf.dataprocessing.DataprocessingApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="178" y="427" width="834" height="297" key="#xdebugger.evaluate" timestamp="1599993934962">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="178" y="427" width="834" height="297" key="#xdebugger.evaluate/0.0.1536.864@0.0.1536.864" timestamp="1599993934962" />
+    <state width="590" height="438" key="DebuggerActiveHint" timestamp="1599993399334">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="590" height="438" key="DebuggerActiveHint/0.0.1536.864@0.0.1536.864" timestamp="1599993399334" />
+    <state x="549" y="187" key="FileChooserDialogImpl" timestamp="1599996835888">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="549" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1599996835888" />
+    <state width="1493" height="100" key="GridCell.Tab.0.bottom" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.0.center" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.0.left" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.0.right" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.1.bottom" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.1.center" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.1.left" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="100" key="GridCell.Tab.1.right" timestamp="1599996837060">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="100" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1599996837060" />
+    <state width="1493" height="277" key="GridCell.Tab.2.bottom" timestamp="1599994329990">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="277" key="GridCell.Tab.2.bottom/0.0.1536.864@0.0.1536.864" timestamp="1599994329990" />
+    <state width="1493" height="277" key="GridCell.Tab.2.center" timestamp="1599994329990">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="277" key="GridCell.Tab.2.center/0.0.1536.864@0.0.1536.864" timestamp="1599994329990" />
+    <state width="1493" height="277" key="GridCell.Tab.2.left" timestamp="1599994329990">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="277" key="GridCell.Tab.2.left/0.0.1536.864@0.0.1536.864" timestamp="1599994329990" />
+    <state width="1493" height="277" key="GridCell.Tab.2.right" timestamp="1599994329990">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="1493" height="277" key="GridCell.Tab.2.right/0.0.1536.864@0.0.1536.864" timestamp="1599994329990" />
+  </component>
+  <component name="se.expertsystem.intellij.aop.aspectj.AspectJProjectComponent">
+    <setting name="isActivated" value="false" />
+  </component>
+</project>
