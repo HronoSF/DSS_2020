@@ -1,11 +1,17 @@
 package com.hronosf.dataprocessing;
 
-import com.fasterxml.jackson.databind.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-@SpringBootApplication
+@EnableAsync
+@EnableScheduling
+@SpringBootApplication(scanBasePackages = "com.hronosf.dataprocessing", exclude = TaskSchedulingAutoConfiguration.class)
 public class DataProcessingApplication {
 
     public static void main(String[] args) {
@@ -13,12 +19,7 @@ public class DataProcessingApplication {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
-        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-
-        return mapper;
+    public TaskScheduler taskScheduler() {
+        return new ThreadPoolTaskScheduler();
     }
 }
