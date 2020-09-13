@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.3.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group = 'com.hronosf'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compile('org.apache.spark:spark-core_2.11:2.0.0') {
+        exclude group: "io.netty"
+    }
+    compile group: 'io.netty', name: 'netty-all', version: '4.0.22.Final'
+    compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '2.0.0'
+    compile group: 'org.elasticsearch', name: 'elasticsearch-spark-20_2.11', version: '7.6.2'
+
+    // Lombok:
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Jackson mapper:
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+configurations.all {
+    exclude module: 'slf4j-log4j12'
+}

@@ -24,7 +24,7 @@ public class SequentialCrawlerJob implements CancelableRunnable {
 
     private final String domain;
     private final Integer timeout;
-    private final MutableBoolean bool = new MutableBoolean();
+    private final MutableBoolean isTaskStopped = new MutableBoolean();
 
     // stuff fields:
     private int offset = 0;
@@ -60,8 +60,8 @@ public class SequentialCrawlerJob implements CancelableRunnable {
     @SneakyThrows
     public void run() {
         // start crawling:
-        bool.setTrue();
-        while (bool.booleanValue() && offset < wallPostCount) {
+        isTaskStopped.setTrue();
+        while (isTaskStopped.booleanValue() && offset < wallPostCount) {
             crawlWallWithOffset();
         }
 
@@ -154,7 +154,7 @@ public class SequentialCrawlerJob implements CancelableRunnable {
 
     @Override
     public void cancel() {
-        bool.setFalse();
+        isTaskStopped.setFalse();
     }
 
     private int saveToElasticSearch() {

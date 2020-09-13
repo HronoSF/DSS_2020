@@ -24,7 +24,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE'
     // Spring-Data Elasticsearch:
-    compile group: 'org.springframework.data', name: 'spring-data-elasticsearch', version: '4.0.3.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.3.3.RELEASE'
     // VK api:
     compile group: 'com.vk.api', name: 'sdk', version: '1.0.6'
     // Jackson mapper:
