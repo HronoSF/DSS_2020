@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,23 +18,28 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ScheduledDataProcessingJob {
 
+    @Value(
+            "#{T(com.hronosf.dataprocessing.util.ResourceReader).readFileToString('classpath:es_query.json')}"
+    )
+    private String esQuery;
+
     private final JavaSparkContext sc;
 
     @Async
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "* 0/15 * * * ?")
     public void get() {
-        //TODO: logic - 1 time process all data from db, then only new/ edited. ADD meta field: process_by_neural_networks - time when document were processed.
-        //TODO: elastic search query for smart extracting after 1 time
-
-        JavaRDD<Map<String, Object>> modifiedData = JavaEsSpark.esRDD(sc, "wall_posts", "?q=*")
+        JavaRDD<Map<String, Object>> modifiedData = JavaEsSpark.esRDD(sc, "wall_posts", esQuery)
                 .map(pair -> {
                     Map<String, Object> map = pair._2();
 
                     map.put("summary", stubNeuralNetWorksSummarization(map));
                     map.put("personToAttitude", stubNeuralNetWorksPersonToAttitude(map));
+                    map.put("processedIn", Calendar.getInstance().getTimeInMillis());
 
                     return map;
                 });
+
+        log.info("<=========================== Updating {} documents ===========================>", modifiedData.count());
 
         JavaEsSpark.saveToEs(modifiedData, "wall_posts", Collections.singletonMap("es.mapping.id", "id"));
     }
