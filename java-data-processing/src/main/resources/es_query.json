@@ -26,7 +26,7 @@
               },
               {
                 "script": {
-                  "script": "doc['edited'].value > doc['processedIn'].value"
+                  "script": "doc['edited'].value >= doc['processedIn'].value"
                 }
               }
             ]
