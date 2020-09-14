@@ -15,7 +15,7 @@ public class CrawlerRelaunchesScheduledJob {
     private final TaskOrchestrationService taskOrchestrationService;
 
     @Async
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "${cron.expression}")
     public void relaunchAllFinishedOrCancelledCrawlerTasks() {
         taskOrchestrationService.relaunchCrawlerFinishedTask();
     }

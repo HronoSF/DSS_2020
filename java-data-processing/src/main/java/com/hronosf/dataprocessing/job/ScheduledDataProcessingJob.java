@@ -26,7 +26,7 @@ public class ScheduledDataProcessingJob {
     private final JavaSparkContext sc;
 
     @Async
-    @Scheduled(cron = "* 0/5 * * * ?")
+    @Scheduled(cron = "${cron.expression}")
     public void processStoredData() {
         JavaRDD<Map<String, Object>> modifiedData = JavaEsSpark.esRDD(sc, "wall_posts", esQuery)
                 .map(pair -> {
