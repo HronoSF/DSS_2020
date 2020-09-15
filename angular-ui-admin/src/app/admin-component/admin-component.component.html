@@ -1,4 +1,40 @@
-<p>admin-component works!</p>
-<div class="authorize-wrapper">
-  <button mat-raised-button color="primary">Authorize</button>
+<h1>Welcome to Admin Service</h1>
+<h2>Search for communities to include to parsing session</h2>
+
+<div class="workarea-container">
+
+<div class="search-container">
+  <form class="search-form" [formGroup]="searchForm" (submit)="search()">
+  <mat-form-field class="example-full-width">
+  <mat-label>Community name</mat-label>
+  <input matInput formControlName="query" placeholder="Лентач">
+  </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" >Search</button>
+  </form>
+
+  <div class="result-container">
+    <div class="groups-result">
+      <div class="one-group-container" *ngFor="let group of groupsResult">
+        <mat-checkbox class="checkbox" (click)="onCheck(group.id)"></mat-checkbox>
+        <div class="group-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
+        <div class="group-name-container">
+          {{group.name}}
+        </div>
+      </div>
+    </div>
+    <div class="users-result">
+
+    </div>
+  </div>
+
+</div>
+
+  <div class="manage-container">
+<div class="included-communities-container">
+  there will be included communities
+</div>
+  <div class="parsing-communities-container">
+    there will be communities in progress
+  </div>
+  </div>
 </div>

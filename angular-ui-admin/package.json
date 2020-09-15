@@ -9,6 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "proxy": "lcp --proxyUrl https://oauth.vk.com",
+    "proxy2": "lcp --proxyUrl https://api.vk.com/method --port 8020",
     "compile-proto": "./node_modules/protoc/protoc/bin/protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --js_out=import_style=commonjs,binary:src/app/proto-gen --ts_out=service=grpc-web:src/app/proto-gen -I ../java-crawler/src/main/proto/ ../java-crawler/src/main/proto/*.proto",
     "inst": "npm install && npm run compile-proto"
   },

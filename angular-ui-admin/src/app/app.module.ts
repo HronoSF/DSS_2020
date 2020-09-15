@@ -9,6 +9,10 @@ import {MatButtonModule} from '@angular/material';
 import {SESSION_STORAGE_SERVICE, SessionService} from './vk-services/session.service';
 import {LOCAL_STORAGE} from 'ngx-webstorage-service';
 import {HttpClientModule} from '@angular/common/http';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 const appRoutes: Routes = [
   { path: '', component: AdminComponentComponent},
@@ -26,7 +30,14 @@ const appRoutes: Routes = [
     RouterModule,
     RouterModule.forRoot(appRoutes),
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+
   ],
   providers: [ { provide: SESSION_STORAGE_SERVICE, useExisting: LOCAL_STORAGE }, SessionService],
   bootstrap: [AppComponent]
