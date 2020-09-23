@@ -14,27 +14,33 @@
 
   <div class="result-container">
     <div class="groups-result">
-      <div class="one-group-container" *ngFor="let group of groupsResult">
+      <div class="one-item-container" *ngFor="let group of groupsResult">
         <mat-checkbox class="checkbox" (click)="onCheck(group.id)"></mat-checkbox>
-        <div class="group-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
-        <div class="group-name-container">
+        <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
+        <div class="item-name-container">
           {{group.name}}
         </div>
       </div>
     </div>
     <div class="users-result">
-
+      <div class="one-item-container" *ngFor="let user of usersResult">
+        <mat-checkbox class="checkbox" (click)="onCheck(user.id)"></mat-checkbox>
+        <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + user.photo + ')'}"></div>
+        <div class="item-name-container">
+          {{user.first_name + ' ' + user.last_name}}
+        </div>
+      </div>
     </div>
   </div>
 
 </div>
+</div>
 
-  <div class="manage-container">
-<div class="included-communities-container">
-  there will be included communities
-</div>
-  <div class="parsing-communities-container">
-    there will be communities in progress
-  </div>
-  </div>
-</div>
+<!--<div class="manage-container">-->
+<!--  <div class="included-communities-container">-->
+<!--    there will be included communities-->
+<!--  </div>-->
+<!--  <div class="parsing-communities-container">-->
+<!--    there will be communities in progress-->
+<!--  </div>-->
+<!--</div>-->

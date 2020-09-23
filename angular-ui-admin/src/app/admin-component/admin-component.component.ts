@@ -2,11 +2,12 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {AuthService} from '../vk-services/auth.service';
 import {vkOpenAuthDialogURL} from '../const';
 import {ActivatedRoute} from '@angular/router';
-import {throwError} from 'rxjs';
+import {forkJoin, throwError, zip} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {FormControl, FormGroup} from "@angular/forms";
 import {CommunitiesService} from "../vk-services/communities.service";
 import {VkGroupsResponse} from "../vk-services/insterfaces/vkGroupsResponse";
+import {VkUsersResponse} from "../vk-services/insterfaces/vkUsersResponse";
 
 @Component({
   selector: 'app-admin-component',
@@ -14,10 +15,12 @@ import {VkGroupsResponse} from "../vk-services/insterfaces/vkGroupsResponse";
   styleUrls: ['./admin-component.component.css']
 })
 export class AdminComponentComponent implements OnInit {
-  vkAuthPath = vkOpenAuthDialogURL;
-  searchForm: FormGroup;
-  groupsResult: VkGroupsResponse[] = [];
+  public searchForm: FormGroup;
+  public groupsResult: VkGroupsResponse[] = [];
+  public choosenGroups: VkGroupsResponse[] = [];
+  public usersResult: VkUsersResponse[] = [];
 
+  private vkAuthPath = vkOpenAuthDialogURL;
 
   constructor(private authService: AuthService, private activatedRoute: ActivatedRoute, private communitiesService: CommunitiesService) {
     this.searchForm = new FormGroup({
@@ -38,9 +41,12 @@ export class AdminComponentComponent implements OnInit {
 
   public search(): void {
     if (this.searchForm.value.query !== '') {
-      this.communitiesService.searchCommunities(this.searchForm.value).subscribe((res: VkGroupsResponse[]) => {
-        console.log(res);
-        this.groupsResult = res;
+      forkJoin(
+        [this.communitiesService.searchCommunities(this.searchForm.value),this.communitiesService.searchUsers(this.searchForm.value)])
+      .subscribe(([groups, users]: [VkGroupsResponse[], VkUsersResponse[]]) => {
+        console.log(groups, users);
+        this.groupsResult = groups.filter(item => item.is_closed === 0);
+        this.usersResult = users;
       });
     }
   }
@@ -49,6 +55,7 @@ export class AdminComponentComponent implements OnInit {
   }
 
   public onCheck(id: number) {
-
+    this.choosenGroups.push(this.groupsResult.find(item => item.id === +id));
+    console.log(this.choosenGroups);
   }
 }
