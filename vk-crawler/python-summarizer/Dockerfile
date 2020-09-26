@@ -12,8 +12,8 @@ RUN cd /app/java-proto-hadler/src/main/proto \
     && python -m grpc_tools.protoc -I. --python_out=/root/python_proto/ --grpc_python_out=/root/python_proto/ summarizer.proto
 
 FROM python
+COPY --from=clone /root/project/DSS_2020/vk-crawler /app/
 COPY --from=protobuf-build /root/python_proto/ /app/python-summarizer
-COPY . .
 EXPOSE 6066
 RUN pip install -r /app/python-summarizer/requirements.txt
 ENTRYPOINT ["sh", "-c"]
