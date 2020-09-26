@@ -1,4 +1,10 @@
 {
+  "_source": [
+    "id",
+    "text",
+    "from_id",
+    "signed_id"
+  ],
   "query": {
     "bool": {
       "should": [

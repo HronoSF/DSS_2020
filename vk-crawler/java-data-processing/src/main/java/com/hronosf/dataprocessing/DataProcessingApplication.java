@@ -9,6 +9,9 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @EnableAsync
 @EnableScheduling
 @SpringBootApplication(scanBasePackages = "com.hronosf.dataprocessing", exclude = TaskSchedulingAutoConfiguration.class)
@@ -21,5 +24,10 @@ public class DataProcessingApplication {
     @Bean
     public TaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
+    }
+
+    @Bean
+    public ExecutorService stealingThreadPoolExecutor() {
+        return Executors.newWorkStealingPool();
     }
 }
