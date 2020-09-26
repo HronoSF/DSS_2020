@@ -15,6 +15,6 @@ FROM python
 COPY --from=clone /root/project/DSS_2020/vk-crawler /app/
 COPY --from=protobuf-build /root/python_proto/ /app/python-summarizer
 EXPOSE 6066
-RUN pip install -r /root/app/python-summarizer/requirements.txt
+RUN pip install -r /app/python-summarizer/requirements.txt
 ENTRYPOINT ["sh", "-c"]
 CMD ["python grpc_service.py"]

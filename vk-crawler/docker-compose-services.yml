@@ -25,7 +25,7 @@ services:
     networks:
       - vk-crawler_crawler_internal
   python-data-processing:
-    container_name: java-data-processing
+    container_name: summarization-service
     build:
         dockerfile: python-summarizer/Dockerfile
         context: .
