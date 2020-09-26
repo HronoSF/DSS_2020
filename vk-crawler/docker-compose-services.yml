@@ -1,0 +1,20 @@
+version: "3.4"
+
+networks:
+  vk-crawler_crawler_internal:
+    external: true
+    
+services:
+  java-crawler:
+    container_name: java-crawler
+    build:
+      dockerfile: java-crawler/Dockerfile
+      context: .
+      args:
+          VK_APP_KEY: 8316dfb98316dfb98316dfb9ee836518c6883168316dfb9dc4e32d3d3de2f857ccbd94e
+          VK_APP_ID: 7587711
+    ports:
+      - "9090:9090"
+    networks:
+      - vk-crawler_crawler_internal
+    

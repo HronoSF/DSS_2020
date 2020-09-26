@@ -30,4 +30,4 @@ EXPOSE 9090
 WORKDIR app/
 COPY --from=crawler-build /root/crawler-0.0.1.jar .
 ENTRYPOINT ["sh", "-c"]
-CMD ["java -jar crawler-0.0.1.jar"]
+CMD ["java -jar -Dspring.profiles.active=docker crawler-0.0.1.jar"]
