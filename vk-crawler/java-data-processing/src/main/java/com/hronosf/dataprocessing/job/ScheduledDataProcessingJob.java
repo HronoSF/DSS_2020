@@ -31,7 +31,7 @@ public class ScheduledDataProcessingJob {
 
     @Async
     @Scheduled(cron = "${cron.expression}")
-    public void method() {
+    public void processEsData() {
         JavaRDD<Map<String, Object>> wallPosts = JavaEsSpark
                 .esRDD(sc, esIndex, esQuery)
                 .values();

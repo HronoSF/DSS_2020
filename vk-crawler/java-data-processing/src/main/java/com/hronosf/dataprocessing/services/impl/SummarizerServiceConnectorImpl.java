@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,11 @@ import java.util.concurrent.ExecutorService;
 @RequiredArgsConstructor
 public class SummarizerServiceConnectorImpl implements SummarizerServiceConnector {
 
-    @GrpcClient("local-grpc-server")
-    private SummarizerGrpc.SummarizerFutureStub summarizationServiceStub;
-
     @Value("${elasticsearch.index}")
     private String esIndex;
+
+    @GrpcClient("local-grpc-server")
+    private SummarizerGrpc.SummarizerFutureStub summarizationServiceStub;
 
     private final JavaSparkContext sc;
     private final ExecutorService executorService;
@@ -78,7 +79,7 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
 
                         // Save to Es processed data:
                         log.info("Updated {} records", updatedData.count());
-//                        JavaEsSpark.saveToEs(updatedData, esIndex, Collections.singletonMap("es.mapping.id", "id"));
+                        JavaEsSpark.saveToEs(updatedData, esIndex, Collections.singletonMap("es.mapping.id", "id"));
                     }
 
                     @Override
