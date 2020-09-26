@@ -1,7 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '2.3.3.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id "com.google.protobuf" version "0.8.13"
     id 'java'
 }
 
@@ -32,36 +31,12 @@ dependencies {
     // Lombok:
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // Proto part:
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 configurations {
     all {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-    }
-}
-
-sourceSets.main.java.srcDirs = ['build/generated/source/proto/main/', 'src/main/java']
-
-protobuf {
-    protoc {
-        // The artifact spec for the Protobuf Compiler
-        artifact = 'com.google.protobuf:protoc:3.0.0'
-    }
-    plugins {
-        // Optional: an artifact spec for a protoc plugin, with "grpc" as
-        // the identifier, which can be referred to in the "plugins"
-        // container of the "generateProtoTasks" closure.
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
-        }
-    }
-    generateProtoTasks {
-        ofSourceSet('main')*.plugins {
-            // Apply the "grpc" plugin whose spec is defined above, without
-            // options.  Note the braces cannot be omitted, otherwise the
-            // plugin will not be added. This is because of the implicit way
-            // NamedDomainObjectContainer binds the methods.
-            grpc {}
-        }
     }
 }

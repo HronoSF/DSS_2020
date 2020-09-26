@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+lexrank
+razdel
+grpcio
+grpcio-tools

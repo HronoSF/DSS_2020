@@ -1,5 +1,6 @@
 package com.hronosf.dataprocessing.job;
 
+import com.hronosf.dataprocessing.services.SummarizerServiceConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.api.java.JavaRDD;
@@ -10,8 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -23,37 +23,24 @@ public class ScheduledDataProcessingJob {
     )
     private String esQuery;
 
+    @Value("${elasticsearch.index}")
+    private String esIndex;
+
     private final JavaSparkContext sc;
+    private final SummarizerServiceConnector summarizerConnector;
 
     @Async
     @Scheduled(cron = "${cron.expression}")
-    public void processStoredData() {
-        JavaRDD<Map<String, Object>> modifiedData = JavaEsSpark.esRDD(sc, "wall_posts", esQuery)
-                .map(pair -> {
-                    Map<String, Object> map = pair._2();
+    public void processEsData() {
+        JavaRDD<Map<String, Object>> wallPosts = JavaEsSpark
+                .esRDD(sc, esIndex, esQuery)
+                .values();
 
-                    map.put("summary", stubNeuralNetWorksSummarization(map));
-                    map.put("personToAttitude", stubNeuralNetWorksPersonToAttitude(map));
-                    map.put("processedIn", Calendar.getInstance().getTimeInMillis());
+        log.info("Extracted {} documents from ES", wallPosts.count());
+        if (wallPosts.isEmpty()) {
+            return;
+        }
 
-                    return map;
-                });
-
-        log.info("<=========================== Updating {} documents ===========================>", modifiedData.count());
-
-        JavaEsSpark.saveToEs(modifiedData, "wall_posts", Collections.singletonMap("es.mapping.id", "id"));
-    }
-
-    private static Map<String, String> stubNeuralNetWorksPersonToAttitude(Map<String, Object> text) {
-        Map<String, String> map = new HashMap<>();
-
-        map.put("Лисица", "Глебица любит Лисицу на " + text.get("id") + " миллионов раз в " + ZonedDateTime.now());
-        map.put("Пиццита", "Глебица любит Пицциту в " + text.get("id") + " миллионов раз меньше Лисицы в " + ZonedDateTime.now());
-
-        return map;
-    }
-
-    private static String stubNeuralNetWorksSummarization(Map<String, Object> text) {
-        return "Тестовое саммари для " + text.get("id") + " в " + ZonedDateTime.now();
+        summarizerConnector.summarizeDocuments(wallPosts);
     }
 }

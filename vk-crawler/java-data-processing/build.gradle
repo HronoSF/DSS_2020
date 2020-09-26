@@ -13,24 +13,25 @@ repositories {
 }
 
 dependencies {
+    // Spring:
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    compile group: 'net.devh', name: 'grpc-client-spring-boot-starter', version: '2.10.1.RELEASE'
+    // Spark:
     compile('org.apache.spark:spark-core_2.11:2.0.0') {
         exclude group: "io.netty"
     }
     compile group: 'io.netty', name: 'netty-all', version: '4.0.22.Final'
     compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '2.0.0'
     compile group: 'org.elasticsearch', name: 'elasticsearch-spark-20_2.11', version: '7.6.2'
-
     // Lombok:
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    // Proto part:
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 }
 
 test {
     useJUnitPlatform()
-}
-
-configurations.all {
-    exclude module: 'slf4j-log4j12'
 }
