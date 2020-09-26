@@ -17,4 +17,17 @@ services:
       - "9090:9090"
     networks:
       - vk-crawler_crawler_internal
-    
+  java-data-processing:
+    container_name: java-data-processing
+    build:
+        dockerfile: java-data-processing/Dockerfile
+        context: .
+    networks:
+      - vk-crawler_crawler_internal
+  python-data-processing:
+    container_name: java-data-processing
+    build:
+        dockerfile: python-summarizer/Dockerfile
+        context: .
+    networks:
+         - vk-crawler_crawler_internal

@@ -15,6 +15,6 @@ FROM python
 COPY --from=protobuf-build /root/python_proto/ /app/python-summarizer
 COPY . .
 EXPOSE 6066
-RUN pip install -r requirements.txt
+RUN pip install -r /app/python-summarizer/requirements.txt
 ENTRYPOINT ["sh", "-c"]
 CMD ["python grpc_service.py"]
