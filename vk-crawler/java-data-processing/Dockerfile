@@ -19,6 +19,7 @@ RUN cd /app/java-data-processing \
     && gradle clean build \
     && mv /app/java-data-processing/build/libs/data-processing-0.0.1.jar /root/
 
+#TODO: SPARK NOT FOUND, CHANGE IMAGE:
 # stage 4: run crawler app
 FROM bellsoft/liberica-openjdk-alpine:8
 EXPOSE 9090
