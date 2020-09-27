@@ -1,4 +1,4 @@
-version: "3.4"
+version: "2.1"
 
 networks:
   vk-crawler_crawler_internal:
@@ -17,6 +17,9 @@ services:
       - "9090:9090"
     networks:
       - vk-crawler_crawler_internal
+    depends_on: 
+      java-data-processing:
+        condition: service_healthy
       
   python-summarization-service:
     container_name: python-summarization-service
@@ -25,6 +28,9 @@ services:
         context: .
     networks:
       - vk-crawler_crawler_internal
+    depends_on: 
+        java-data-processing:
+          condition: service_healthy
   
   java-data-processing:
     container_name: java-data-processing
@@ -33,6 +39,10 @@ services:
       context: .
     networks:
       - vk-crawler_crawler_internal
-    depends_on: 
-      - python-summarization-service
-      - java-crawler
+    # depends_on: 
+    #   - python-summarization-service
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://java-data-processing:7071/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

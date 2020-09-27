@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 # read data set:
 logging.info("Reading data set")
 result = []
-path_to_data = os.getcwd()+"/data"
+path_to_data = os.getcwd() + "data"
 for filename in os.listdir(path_to_data):
     with open(os.path.join(path_to_data, filename), 'r', encoding='utf_8') as r:
         for line in r:
