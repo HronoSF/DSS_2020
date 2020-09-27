@@ -5,9 +5,9 @@ RUN git clone "https://github.com/HronoSF/DSS_2020.git"
 
 # stage 2: build protobuf services from .proto files
 FROM python as protobuf-build
-COPY --from=clone /root/project/DSS_2020/vk-crawler /app/
+COPY --from=clone /root/project/DSS_2020/vk-crawler/java-proto-hadler /app/
 RUN apt update && apt install -y protobuf-compiler && pip install grpcio grpcio-tools
-RUN cd /app/java-proto-hadler/src/main/proto \
+RUN cd /app/src/main/proto \
     && mkdir /root/python_proto/ \
     && python -m grpc_tools.protoc -I. --python_out=/root/python_proto/ --grpc_python_out=/root/python_proto/ summarizer.proto
 
