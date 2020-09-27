@@ -9,8 +9,8 @@ import {VkUsersResponse} from './insterfaces/vkUsersResponse';
 import {CrawlerClient} from '../proto-gen/crawler_pb_service';
 import {CrawlerJobStatus, StartParsingRequest} from '../proto-gen/crawler_pb';
 import {environment} from '../../environments/environment';
-import {Text} from '../proto-gen/datahash_pb';
-import {DataHashClient} from "../proto-gen/datahash_pb_service";
+// import {Text} from '../proto-gen/datahash_pb';
+// import {DataHashClient} from "../proto-gen/datahash_pb_service";
 
 declare var VK;
 
@@ -23,7 +23,7 @@ export class CommunitiesService {
   public chosenUsers: VkUsersResponse[] = [];
 
   private crawlerClient: CrawlerClient = new CrawlerClient(environment.backendUrl);
-  private testGRPC: DataHashClient = new DataHashClient(environment.backendUrl);
+  // private testGRPC: DataHashClient = new DataHashClient(environment.backendUrl);
 
   constructor(
     private http: HttpClient,
@@ -79,21 +79,21 @@ export class CommunitiesService {
     });
   }
 
-  public testGrpc(): Observable<any> {
-    const text = 'I love Gleb <3';
-    const request = new Text();
-    request.setData(text);
-
-    return new Observable((observer: Observer<any>) => {
-      this.testGRPC.hash_md5(request, ((error, response: Text) => {
-        if (error) {
-          observer.error(new Error(error.message));
-        } else {
-          const result = response.getData();
-          observer.next(result);
-          observer.complete();
-        }
-      }));
-    });
-  }
+  // public testGrpc(): Observable<any> {
+  //   const text = 'I love Gleb <3';
+  //   const request = new Text();
+  //   request.setData(text);
+  //
+  //   return new Observable((observer: Observer<any>) => {
+  //     this.testGRPC.hash_md5(request, ((error, response: Text) => {
+  //       if (error) {
+  //         observer.error(new Error(error.message));
+  //       } else {
+  //         const result = response.getData();
+  //         observer.next(result);
+  //         observer.complete();
+  //       }
+  //     }));
+  //   });
+  // }
 }

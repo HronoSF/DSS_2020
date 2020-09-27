@@ -103,8 +103,8 @@ export class AdminComponentComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // this.communitiesService.startCrawling().subscribe(res => console.log(res));
-          this.communitiesService.testGrpc().subscribe(res => console.log(res));
+          this.communitiesService.startCrawling().subscribe(res => console.log(res));
+          // this.communitiesService.testGrpc().subscribe(res => console.log(res));
         }
         console.log(`Dialog result: ${result}`);
       });
