@@ -2,3 +2,42 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.result-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 7px;
+  overflow: auto;
+}
+.groups-result, .users-result {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  overflow: auto;
+  height: 475px;
+}
+.groups-result {
+  border-right: 1px solid gray;
+}
+
+.item-photo-container {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  flex-shrink: 1;
+}
+
+.item-name-container {
+  font-size: 11px;
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+.one-item-container {
+  display: flex;
+  align-items: center;
+  padding: 7px;
+  border-bottom: 1px solid #e7e8ec;
+}

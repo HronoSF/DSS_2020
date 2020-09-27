@@ -4,4 +4,4 @@ export interface VkUsersResponse {
   last_name: string;
   screen_name: string;
   photo: string;
-};
+}

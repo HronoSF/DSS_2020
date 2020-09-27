@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h1>Confirm you choice</h1>
+</div>
+
+<div class="result-container">
+  <div class="groups-result">
+    <div class="one-item-container" *ngFor="let group of groups">
+      <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
+      <div class="item-name-container">
+        {{group.name}}
+      </div>
+    </div>
+  </div>
+  <div class="users-result">
+    <div class="one-item-container" *ngFor="let user of users">
+      <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + user.photo + ')'}"></div>
+      <div class="item-name-container">
+        {{user.first_name + ' ' + user.last_name}}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <button mat-raised-button [mat-dialog-close]="false">Close</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="true">Confirm</button>
+</div>

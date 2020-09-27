@@ -1,0 +1,11 @@
+version: "3.4"
+
+services:
+  admin-vk:
+    container_name: admin-vk
+    build:
+      dockerfile: angular-ui-admin/Dockerfile
+      context: .
+    ports:
+      - "4200:4200"
+

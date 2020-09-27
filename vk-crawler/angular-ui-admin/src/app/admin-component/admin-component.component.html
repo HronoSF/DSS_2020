@@ -9,26 +9,49 @@
   <mat-label>Community name</mat-label>
   <input matInput formControlName="query" placeholder="Лентач">
   </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" >Search</button>
+    <button mat-raised-button  color="primary" type="submit" >Search</button>
   </form>
-
+  <button
+    mat-raised-button
+    class="submit-button"
+    color="accent"
+    type="button"
+    (click)="openConfirmationDialog()"
+    [disabled]="!communitiesService.chosenUsers.length && !communitiesService.chosenGroups.length" >Confirm Result</button>
   <div class="result-container">
     <div class="groups-result">
+      <h2>Groups result</h2>
       <div class="one-item-container" *ngFor="let group of groupsResult">
-        <mat-checkbox class="checkbox" (click)="onCheck(group.id)"></mat-checkbox>
+        <mat-checkbox class="checkbox" [checked]="isGroupChecked(group.id)" (change)="onCheckGroup($event, group.id)"></mat-checkbox>
         <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
         <div class="item-name-container">
           {{group.name}}
         </div>
       </div>
+      <div class="paginator-container">
+        <mat-paginator
+                       [length]="groupsResultCount"
+                       [pageSize]="20"
+                       [pageSizeOptions]="[20]"
+                       (page)="onGroupsPageChange($event)">
+        </mat-paginator>
+      </div>
     </div>
     <div class="users-result">
+      <h2>Users result</h2>
       <div class="one-item-container" *ngFor="let user of usersResult">
-        <mat-checkbox class="checkbox" (click)="onCheck(user.id)"></mat-checkbox>
+        <mat-checkbox class="checkbox" [checked]="isUserChecked(user.id)" (change)="onCheckUser($event, user.id)"></mat-checkbox>
         <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + user.photo + ')'}"></div>
         <div class="item-name-container">
           {{user.first_name + ' ' + user.last_name}}
         </div>
+      </div>
+      <div class="paginator-container">
+        <mat-paginator [length]="usersResultCount"
+                       [pageSize]="20"
+                       [pageSizeOptions]="[20]"
+                       (page)="onUsersPageChange($event)">
+        </mat-paginator>
       </div>
     </div>
   </div>
