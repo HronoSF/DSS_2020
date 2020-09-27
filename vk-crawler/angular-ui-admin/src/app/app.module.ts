@@ -18,8 +18,8 @@ import {ConfirmationComponent} from './admin-component/confiramtion/confirmation
 import {MatDialogModule} from '@angular/material/dialog';
 import {CrawlerClient} from './proto-gen/crawler_pb_service';
 import {CrawlerClientFactory} from './crawler-client-factory';
-import {DataHash, DataHashClient} from './proto-gen/datahash_pb_service';
-import {TestClientFactory} from './test-crawler';
+// import {DataHash, DataHashClient} from './proto-gen/datahash_pb_service';
+// import {TestClientFactory} from './test-crawler';
 
 const appRoutes: Routes = [
   { path: '', component: AdminComponentComponent},
@@ -51,7 +51,7 @@ const appRoutes: Routes = [
     SessionService,
     { provide: CrawlerClient, useFactory: CrawlerClientFactory },
     { provide: SESSION_STORAGE_SERVICE, useExisting: LOCAL_STORAGE },
-    { provide: DataHashClient, useFactory: TestClientFactory },
+    // { provide: DataHashClient, useFactory: TestClientFactory },
 
   ],
   bootstrap: [AppComponent],
