@@ -11,6 +11,7 @@ RUN cd /app/java-proto-hadler/src/main/proto \
     && mkdir /root/python_proto/ \
     && python -m grpc_tools.protoc -I. --python_out=/root/python_proto/ --grpc_python_out=/root/python_proto/ summarizer.proto
 
+# stage 3: run python service
 FROM python
 COPY --from=clone /root/project/DSS_2020/vk-crawler/python-summarizer/ /app/
 COPY --from=protobuf-build /root/python_proto/ /app/

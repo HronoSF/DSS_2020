@@ -19,14 +19,14 @@ RUN cd /app/java-data-processing \
     && gradle clean build \
     && mv /app/java-data-processing/build/libs/data-processing-0.0.1.jar /root/
 
-#TODO: SPARK NOT FOUND, CHANGE IMAGE:
 # stage 4: run crawler app
-FROM bellsoft/liberica-openjdk-alpine:8
+# we have to use gradle image because of hadoop issue: https://github.com/elastic/elasticsearch-hadoop/issues/1358
+FROM gradle
 EXPOSE 9090
 WORKDIR app/
 COPY --from=crawler-build /root/data-processing-0.0.1.jar .
 ENTRYPOINT ["sh", "-c"]
-CMD ["java -jar -Dspring.profiles.active=docker data-processing-0.0.1.jar"]
+CMD ["gradle -Dspring.profiles.active=docker booRun"]
 
 
 
