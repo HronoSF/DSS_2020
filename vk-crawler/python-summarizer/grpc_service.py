@@ -1,3 +1,4 @@
+import os
 import grpc
 import time
 import razdel
@@ -15,7 +16,7 @@ s_logger.setLevel(logging.ERROR)
 logging.basicConfig(level=logging.DEBUG)
 
 lxr = LexRank()
-sc = pyspark.SparkContext('local[*]')
+sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
 
 
 def summarize_text_with_lex_rank(doc):
