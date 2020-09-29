@@ -6,3 +6,4 @@ grpcio
 grpcio-tools
 pyspark
 pickle
+os
