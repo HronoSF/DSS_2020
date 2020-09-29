@@ -37,10 +37,7 @@ public class ScheduledDataProcessingJob {
                 .values();
 
         log.info("Extracted {} documents from ES", wallPosts.count());
-        if (wallPosts.isEmpty()) {
-            return;
-        }
 
-        summarizerConnector.summarizeDocuments(wallPosts);
+        summarizerConnector.summarizeText(wallPosts);
     }
 }

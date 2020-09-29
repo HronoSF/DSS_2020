@@ -32,29 +32,32 @@ services:
       - "6969:6969"
     volumes:
       - /log:/log
-
-  spark-master:
-    image: bde2020/spark-master:3.0.0-hadoop3.2
-    container_name: spark-master
+  spark:
+    image: bitnami/spark:2.4.6
+    container_name: spark
     environment:
-      - INIT_DAEMON_STEP=setup_spark
-      - "constraint:node==spark-master"
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
     ports:
-      - "8080:8080"
-      - "7077:7077"
+      - '8080:8080'
+      - '7077:7077'
     networks:
         - crawler_internal
-     
   spark-worker-1:
-    image: bde2020/spark-worker:3.0.0-hadoop3.2
-    container_name: spark-worker-1
+    image: bitnami/spark:2.4.6
     environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
-      - "constraint:node==spark-worker-1"
-    depends_on:
-       - spark-master
-    ports:
-      - "8081:8081"
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=4G
+      - SPARK_WORKER_CORES=4
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports: 
+      - '8081:8081'
     networks:
         - crawler_internal
-  

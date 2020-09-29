@@ -4,3 +4,4 @@ lexrank
 razdel
 grpcio
 grpcio-tools
+pyspark

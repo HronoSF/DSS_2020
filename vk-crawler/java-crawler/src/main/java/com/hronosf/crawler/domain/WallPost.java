@@ -12,20 +12,20 @@ import org.springframework.data.elasticsearch.annotations.Document;
 public class WallPost {
 
     @Id
-    private Integer id;
+    private String id;
 
     @JsonAlias("from_id")
-    private Integer fromId;
+    private String fromId;
 
     @JsonAlias("owner_id")
-    private Integer ownerId;
+    private String ownerId;
 
     @JsonAlias("signed_id")
-    private Integer signerId;
+    private String signerId;
 
     private String text;
 
-    private Integer edited;
+    private String edited;
 
-    private Integer date;
+    private String date;
 }

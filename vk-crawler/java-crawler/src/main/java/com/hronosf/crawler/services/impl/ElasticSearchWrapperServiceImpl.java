@@ -22,10 +22,10 @@ public class ElasticSearchWrapperServiceImpl implements ElasticSearchWrapperServ
 
     @Override
     public int saveOnlyNewOrChangedPosts(List<WallPost> parsedPosts) {
-        String ids = parsedPosts.stream().map(post -> post.getId().toString()).collect(Collectors.joining(","));
+        String ids = parsedPosts.stream().map(WallPost::getId).collect(Collectors.joining(","));
 
         // query ES to get existing post by id set:
-        Map<Integer, WallPost> existedPosts = repository.findAllById(ids, PageRequest.of(0, parsedPosts.size()))
+        Map<String, WallPost> existedPosts = repository.findAllById(ids, PageRequest.of(0, parsedPosts.size()))
                 .getContent().stream()
                 .collect(Collectors.toMap(WallPost::getId, Function.identity()));
 

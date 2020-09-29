@@ -1,5 +1,6 @@
 package com.hronosf.crawler.controller;
 
+import com.hronosf.crawler.controller.CrawlerGrpc.CrawlerImplBase;
 import com.hronosf.crawler.services.TaskOrchestrationService;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
@@ -9,17 +10,17 @@ import java.util.Map;
 
 @GrpcService
 @RequiredArgsConstructor
-public class CrawlerGrpcServiceImpl extends com.hronosf.crawler.controller.CrawlerGrpc.CrawlerImplBase {
+public class CrawlerGrpcServiceImpl extends CrawlerImplBase {
 
     private final TaskOrchestrationService taskOrchestrationService;
 
     @Override
-    public void startCrawling(com.hronosf.crawler.controller.StartParsingRequest request, StreamObserver<com.hronosf.crawler.controller.CrawlerJobStatus> responseObserver) {
+    public void startCrawling(StartParsingRequest request, StreamObserver<CrawlerJobStatus> responseObserver) {
         // start crawling:
         Map<String, String> crawlingJobsStatuses = taskOrchestrationService.startRecursiveCrawlingJob(request.getToParseList());
 
         // build response:
-        com.hronosf.crawler.controller.CrawlerJobStatus response = com.hronosf.crawler.controller.CrawlerJobStatus.newBuilder()
+        CrawlerJobStatus response = CrawlerJobStatus.newBuilder()
                 .putAllDomainToStatus(crawlingJobsStatuses)
                 .build();
 

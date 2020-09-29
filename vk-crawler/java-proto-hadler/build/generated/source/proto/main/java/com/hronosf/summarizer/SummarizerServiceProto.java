@@ -43,9 +43,9 @@ public final class SummarizerServiceProto {
       "\001 \003(\0132%.com.hronosf.summarizer.TextToSum" +
       "mary\"Q\n\021SummarizeResponse\022<\n\rtextToSumma" +
       "ry\030\001 \003(\0132%.com.hronosf.summarizer.TextTo" +
-      "Summary\"O\n\rTextToSummary\022\n\n\002id\030\001 \001(\001\022\014\n\004" +
+      "Summary\"O\n\rTextToSummary\022\n\n\002id\030\001 \001(\t\022\014\n\004" +
       "text\030\002 \001(\t\022\017\n\007summary\030\003 \001(\t\022\023\n\013processed" +
-      "In\030\004 \001(\0012p\n\nSummarizer\022b\n\tsummarize\022(.co" +
+      "In\030\004 \001(\t2p\n\nSummarizer\022b\n\tsummarize\022(.co" +
       "m.hronosf.summarizer.SummarizeRequest\032)." +
       "com.hronosf.summarizer.SummarizeResponse",
       "\"\000B2\n\026com.hronosf.summarizerB\026Summarizer" +

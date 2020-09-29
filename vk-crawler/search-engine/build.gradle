@@ -1,0 +1,39 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group = 'com.hronosf'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring:
+    implementation 'net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE'
+    // Lombok:
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    // Spark:
+    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.4.7'
+    compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '2.4.7'
+    compile group: 'org.elasticsearch', name: 'elasticsearch-spark-20_2.11', version: '7.6.2'
+    // Proto part:
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // kryo
+    compile group: 'de.javakaffee', name: 'kryo-serializers', version: '0.42'
+}
+
+bootJar {
+    requiresUnpack '**/elasticsearch-hadoop*.jar'
+}

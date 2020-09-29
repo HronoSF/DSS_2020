@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.hronosf.search";
+option java_outer_classname = "SearchServiceProto";
+
+package com.hronosf.search;
+
+service Search {
+  rpc search(SearchRequest) returns (SearchResponse){}
+}
+
+message SearchRequest{
+  string textToSearch = 1;
+  int32 page = 2;
+  int32 size = 3;
+}
+
+message SearchResponse{
+  repeated WallPost content = 1;
+}
+
+message WallPost{
+  string id = 1 ;
+  string  fromId = 2;
+  string  ownerId = 3;
+  string  signerId = 4;
+  string  text = 5;
+  string  edited = 6;
+  string  date = 7;
+  string summary = 8;
+  string  processedIn = 9;
+  repeated ObjectToRelation relationMap = 10;
+}
+
+message ObjectToRelation{
+  string object = 1 ;
+  string relation = 2;
+}

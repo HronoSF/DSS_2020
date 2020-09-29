@@ -20,3 +20,5 @@ Tbuild/generated/source/proto/main/java/com/hronosf/summarizer/SummarizeResponse
 ^build/generated/source/proto/main/java/com/hronosf/crawler/controller/StartParsingRequest.java,f\8\f8902250c1cfa4abff3ac77b180ca94d0b883020
 Ž
 ^build/generated/source/proto/main/java/com/hronosf/crawler/controller/CrawlerServiceProto.java,5\3\5388ae31328c38f4feafc05ddcdac4a28ac3387e
+K
+src/main/proto/search.proto,7\8\78fa227a445b3883ebe9f1a4c777ff45cb717188

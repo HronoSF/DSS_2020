@@ -19,8 +19,8 @@ message SummarizeResponse{
 }
 
 message TextToSummary{
-  double id = 1;
+  string id = 1;
   string text = 2 ;
   string summary = 3 ;
-  double processedIn= 4;
+  string processedIn= 4;
 }

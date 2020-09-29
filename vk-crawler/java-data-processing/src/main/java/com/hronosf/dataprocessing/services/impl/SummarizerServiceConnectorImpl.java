@@ -14,7 +14,6 @@ import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -32,7 +31,7 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
     private final JavaSparkContext sc;
     private final ExecutorService executorService;
 
-    public void summarizeDocuments(JavaRDD<Map<String, Object>> toSummarize) {
+    public void summarizeText(JavaRDD<Map<String, Object>> toSummarize) {
         // use spark to map to grpc message entry:
         List<TextToSummary> textToSummaries = toSummarize
                 .map(map -> {
@@ -40,7 +39,7 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
 
                     return TextToSummary
                             .newBuilder()
-                            .setId(Double.parseDouble(map.get("id").toString()))
+                            .setId((map.get("id").toString()))
                             .setText(text == null ? StringUtils.EMPTY : text.toString())
                             .build();
                 })
@@ -73,6 +72,7 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
                                     Map<String, Object> updatedDocument = new HashMap<>();
                                     updatedDocument.put("id", response.getId());
                                     updatedDocument.put("summary", response.getSummary());
+                                    updatedDocument.put("processedIn", response.getProcessedIn());
 
                                     return updatedDocument;
                                 });
@@ -83,8 +83,8 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
                     }
 
                     @Override
-                    public void onFailure(@ParametersAreNonnullByDefault Throwable throwable) {
-                        log.error("Something went wrong while future waiting", throwable);
+                    public void onFailure(Throwable throwable) {
+                        log.error("Something went wrong while future waiting:\n {}", throwable.getMessage());
                     }
 
                 }, executorService);
