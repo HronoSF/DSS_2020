@@ -5,3 +5,4 @@ razdel
 grpcio
 grpcio-tools
 pyspark
+pickle
