@@ -5,7 +5,7 @@ RUN git clone "https://github.com/HronoSF/DSS_2020.git"
 
 # stage 2: build protobuf services from .proto files
 FROM gradle as protobuf-build
-COPY --from=clone /root/project/DSS_2020/vk-crawler/java-proto-hadler /app/
+COPY --from=clone /root/project/DSS_2020/vk-crawler/java-proto-handler /app/
 RUN apt update && \
     apt install -y protobuf-compiler
 RUN cd /app/ \
