@@ -61,11 +61,13 @@ public class SummarizerServiceConnectorImpl implements SummarizerServiceConnecto
 
                     @Override
                     public void onSuccess(@NullableDecl SummarizeResponse summarizeResponse) {
+                        // return if response empty:do
                         if (summarizeResponse == null || summarizeResponse.getTextToSummaryList() == null) {
                             log.error("Something went wrong, future returned null or response list is null");
                             return;
                         }
 
+                        // Prepare data to update with spark:
                         JavaRDD<Object> updatedData = sc
                                 .parallelize(summarizeResponse.getTextToSummaryList())
                                 .map(response -> {

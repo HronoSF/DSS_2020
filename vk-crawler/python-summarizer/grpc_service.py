@@ -5,8 +5,8 @@ import logging
 import pyspark
 import summarizer_pb2
 import summarizer_pb2_grpc
-from lexrank_service import lxr
 from concurrent import futures
+from lexrank_model import LexRank
 
 import logging
 s_logger = logging.getLogger('py4j.java_gateway')
@@ -14,34 +14,31 @@ s_logger.setLevel(logging.ERROR)
 
 logging.basicConfig(level=logging.DEBUG)
 
+lxr = LexRank()
 sc = pyspark.SparkContext('local[*]')
 
-def func(doc):
-    summary = predict_lex_rank(doc.text)
+
+def summarize_text_with_lex_rank(doc):
+    summary = lxr.get_prediction_lex_rank(doc.text)
     processedIn = int(round(time.time() * 1000))
-    return summarizer_pb2.TextToSummary(id= doc.id, text=doc.text, summary=summary, processedIn = str(processedIn))
-
-
-def predict_lex_rank(text, summary_size=1, threshold=None):
-    sentences = [s.text for s in razdel.sentenize(text)]
-    prediction = lxr.get_summary(
-        sentences, summary_size=summary_size, threshold=threshold)
-    prediction = " ".join(prediction) 
-    return prediction
+    return summarizer_pb2.TextToSummary(id=doc.id, text=doc.text, summary=summary, processedIn=str(processedIn))
 
 
 # gRPC server implementation:
 class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
+
     def summarize(self, request, context):
-        docs = request.textToSummary
         # get data from request:
-        logging.info('Processing of %s texts', len(docs))
+        docs = request.textToSummary
+
+        logging.info('Processing of %s text(s)', len(docs))
 
         # modify data - set summary and processing time:
         updated_docs = sc.parallelize(docs) \
-            .map(lambda doc: func(doc)) \
+            .map(lambda doc: summarize_text_with_lex_rank(doc)) \
             .collect()
 
+        # return SummarizeResponse:
         return summarizer_pb2.SummarizeResponse(textToSummary=updated_docs)
 
 

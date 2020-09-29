@@ -32,6 +32,7 @@ services:
       - "6969:6969"
     volumes:
       - /log:/log
+      
   spark:
     image: bitnami/spark:2.4.6
     container_name: spark
@@ -46,6 +47,7 @@ services:
       - '7077:7077'
     networks:
         - crawler_internal
+        
   spark-worker-1:
     image: bitnami/spark:2.4.6
     environment:

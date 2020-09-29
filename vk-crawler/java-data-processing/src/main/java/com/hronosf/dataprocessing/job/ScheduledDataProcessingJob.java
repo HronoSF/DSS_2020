@@ -32,12 +32,14 @@ public class ScheduledDataProcessingJob {
     @Async
     @Scheduled(cron = "${cron.expression}")
     public void processEsData() {
+        // extract data from Es with spark:
         JavaRDD<Map<String, Object>> wallPosts = JavaEsSpark
                 .esRDD(sc, esIndex, esQuery)
                 .values();
 
         log.info("Extracted {} documents from ES", wallPosts.count());
 
+        // call for neural nets work:
         summarizerConnector.summarizeText(wallPosts);
     }
 }
