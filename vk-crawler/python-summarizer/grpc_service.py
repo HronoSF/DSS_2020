@@ -9,16 +9,20 @@ import summarizer_pb2_grpc
 from concurrent import futures
 from lexrank_model import LexRank
 
-import logging
-s_logger = logging.getLogger('py4j.java_gateway')
-s_logger.setLevel(logging.ERROR)
-
+# set log level & disable pyspark logs:
 logging.basicConfig(level=logging.DEBUG)
+s_logger = logging.getLogger('py4j.java_gateway').setLevel(logging.ERROR)
 
-lxr = LexRank()
+# init LexRank:
+logging.info("Initializing LexRank with precounted idf")
+lxr = LexRank(path_to_idf_pickle='weights/idf.pickle')
+
+# init Spark context:
+logging.info("Initializing PySpark context")
 sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
 
 
+# define data transfromation to proto entity method:
 def summarize_text_with_lex_rank(doc):
     summary = lxr.get_prediction_lex_rank(doc.text)
     processedIn = int(round(time.time() * 1000))
@@ -28,6 +32,7 @@ def summarize_text_with_lex_rank(doc):
 # gRPC server implementation:
 class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
 
+    # override service method:
     def summarize(self, request, context):
         # get data from request:
         docs = request.textToSummary
@@ -51,11 +56,7 @@ def serve():
     logging.info('Started server on localost:6066')
     server.add_insecure_port('[::]:6066')
     server.start()
-    try:
-        while True:
-            pass
-    except KeyboardInterrupt:
-        server.stop(0)
+    server.wait_for_termination()
 
 
 if __name__ == '__main__':

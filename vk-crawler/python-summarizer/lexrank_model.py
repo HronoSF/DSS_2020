@@ -17,6 +17,8 @@ class LexRank:
         keep_emails=False,
         keep_urls=False,
         include_new_words=True,
+        path_to_idf_pickle=None,
+        documents=None
     ):
         self.stopwords = STOPWORDS['ru']
         self.keep_numbers = keep_numbers
@@ -24,8 +26,14 @@ class LexRank:
         self.keep_urls = keep_urls
         self.include_new_words = include_new_words
 
-        with open('weights/idf.pickle', 'rb') as f:
-            self.idf_score  = pickle.load(f)
+        if path_to_idf_pickle is not None:
+            with open(path_to_idf_pickle, 'rb') as f:
+                self.idf_score = pickle.load(f)
+        elif documents is not None:
+            self.idf_score = self._calculate_idf(documents)
+        else:
+            raise ValueError(
+                "Provide documents array or path to idf pickle file!")
 
     def get_summary(
         self,
@@ -105,6 +113,38 @@ class LexRank:
 
         return tokens
 
+    def _calculate_idf(self, documents):
+        bags_of_words = []
+
+        for doc in documents:
+            doc_words = set()
+
+            for sentence in doc:
+                words = self.tokenize_sentence(sentence)
+                doc_words.update(words)
+
+            if doc_words:
+                bags_of_words.append(doc_words)
+
+        if not bags_of_words:
+            raise ValueError('documents are not informative')
+
+        doc_number_total = len(bags_of_words)
+
+        if self.include_new_words:
+            default_value = math.log(doc_number_total + 1)
+
+        else:
+            default_value = 0
+
+        idf_score = defaultdict(lambda: default_value)
+
+        for word in set.union(*bags_of_words):
+            doc_number_word = sum(1 for bag in bags_of_words if word in bag)
+            idf_score[word] = math.log(doc_number_total / doc_number_word)
+
+        return idf_score
+
     def _calculate_similarity_matrix(self, tf_scores):
         length = len(tf_scores)
 
@@ -168,6 +208,5 @@ class LexRank:
         sentences = [s.text for s in razdel.sentenize(text)]
         prediction = self.get_summary(
             sentences, summary_size=summary_size, threshold=threshold)
-        prediction = " ".join(prediction) 
+        prediction = " ".join(prediction)
         return prediction
-
