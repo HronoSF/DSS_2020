@@ -14,7 +14,7 @@ EXPOSE 4200/tcp
 #Compile proto files
 RUN apt update && \
     apt install -y protobuf-compiler
-RUN protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --js_out=import_style=commonjs,binary:src/app/proto-gen --ts_out=service=grpc-web:src/app/proto-gen -I java-proto-hadler/src/main/proto/ java-proto-hadler/src/main/proto/crawler.proto
+RUN protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --js_out=import_style=commonjs,binary:src/app/proto-gen --ts_out=service=grpc-web:src/app/proto-gen -I java-proto-handler/src/main/proto/ java-proto-handler/src/main/proto/crawler.proto
 
 # Serve the app
 RUN npm run proxy&
