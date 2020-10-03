@@ -38,7 +38,7 @@
       </div>
     </div>
     <div class="users-result">
-      <h2>Users result</h2>
+      <h2 style="margin-left: 20px">Users result</h2>
       <div class="one-item-container" *ngFor="let user of usersResult">
         <mat-checkbox class="checkbox" [checked]="isUserChecked(user.id)" (change)="onCheckUser($event, user.id)"></mat-checkbox>
         <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + user.photo + ')'}"></div>

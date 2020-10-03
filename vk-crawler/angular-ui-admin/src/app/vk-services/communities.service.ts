@@ -78,22 +78,4 @@ export class CommunitiesService {
       }));
     });
   }
-
-  // public testGrpc(): Observable<any> {
-  //   const text = 'I love Gleb <3';
-  //   const request = new Text();
-  //   request.setData(text);
-  //
-  //   return new Observable((observer: Observer<any>) => {
-  //     this.testGRPC.hash_md5(request, ((error, response: Text) => {
-  //       if (error) {
-  //         observer.error(new Error(error.message));
-  //       } else {
-  //         const result = response.getData();
-  //         observer.next(result);
-  //         observer.complete();
-  //       }
-  //     }));
-  //   });
-  // }
 }
