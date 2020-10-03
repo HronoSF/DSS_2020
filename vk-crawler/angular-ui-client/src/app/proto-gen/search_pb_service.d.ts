@@ -1,31 +1,21 @@
-// package: 
-// file: datahash.proto
+// package: com.hronosf.search
+// file: search.proto
 
-import * as datahash_pb from "./datahash_pb";
+import * as search_pb from "./search_pb";
 import {grpc} from "@improbable-eng/grpc-web";
 
-type DataHashhash_md5 = {
+type Searchsearch = {
   readonly methodName: string;
-  readonly service: typeof DataHash;
+  readonly service: typeof Search;
   readonly requestStream: false;
   readonly responseStream: false;
-  readonly requestType: typeof datahash_pb.Text;
-  readonly responseType: typeof datahash_pb.Text;
+  readonly requestType: typeof search_pb.SearchRequest;
+  readonly responseType: typeof search_pb.SearchResponse;
 };
 
-type DataHashhash_sha256 = {
-  readonly methodName: string;
-  readonly service: typeof DataHash;
-  readonly requestStream: false;
-  readonly responseStream: false;
-  readonly requestType: typeof datahash_pb.Text;
-  readonly responseType: typeof datahash_pb.Text;
-};
-
-export class DataHash {
+export class Search {
   static readonly serviceName: string;
-  static readonly hash_md5: DataHashhash_md5;
-  static readonly hash_sha256: DataHashhash_sha256;
+  static readonly search: Searchsearch;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -56,27 +46,18 @@ interface BidirectionalStream<ReqT, ResT> {
   on(type: 'status', handler: (status: Status) => void): BidirectionalStream<ReqT, ResT>;
 }
 
-export class DataHashClient {
+export class SearchClient {
   readonly serviceHost: string;
 
   constructor(serviceHost: string, options?: grpc.RpcOptions);
-  hash_md5(
-    requestMessage: datahash_pb.Text,
+  search(
+    requestMessage: search_pb.SearchRequest,
     metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: datahash_pb.Text|null) => void
+    callback: (error: ServiceError|null, responseMessage: search_pb.SearchResponse|null) => void
   ): UnaryResponse;
-  hash_md5(
-    requestMessage: datahash_pb.Text,
-    callback: (error: ServiceError|null, responseMessage: datahash_pb.Text|null) => void
-  ): UnaryResponse;
-  hash_sha256(
-    requestMessage: datahash_pb.Text,
-    metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: datahash_pb.Text|null) => void
-  ): UnaryResponse;
-  hash_sha256(
-    requestMessage: datahash_pb.Text,
-    callback: (error: ServiceError|null, responseMessage: datahash_pb.Text|null) => void
+  search(
+    requestMessage: search_pb.SearchRequest,
+    callback: (error: ServiceError|null, responseMessage: search_pb.SearchResponse|null) => void
   ): UnaryResponse;
 }
 
