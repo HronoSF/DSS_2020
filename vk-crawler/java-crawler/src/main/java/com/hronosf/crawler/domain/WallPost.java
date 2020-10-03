@@ -15,17 +15,17 @@ public class WallPost {
     private String id;
 
     @JsonAlias("from_id")
-    private String fromId;
+    private Long fromId;
 
     @JsonAlias("owner_id")
-    private String ownerId;
+    private Long ownerId;
 
     @JsonAlias("signed_id")
-    private String signerId;
+    private Long signerId;
 
     private String text;
 
-    private String edited;
+    private Long edited;
 
-    private String date;
+    private Long date;
 }

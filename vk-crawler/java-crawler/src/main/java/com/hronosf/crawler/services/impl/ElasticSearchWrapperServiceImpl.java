@@ -5,6 +5,7 @@ import com.hronosf.crawler.repository.CrawledPostRepository;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,7 @@ public class ElasticSearchWrapperServiceImpl implements ElasticSearchWrapperServ
             List<WallPost> alreadySavedPosts = parsedPosts.stream()
                     // distinct if we had error and re-parsed offset:
                     .distinct()
-                    // filter posts which we already know:
+                    // filter posts which we already know and it's text not empty:
                     .filter(post -> existedPosts.get(post.getId()) != null)
                     // filter only not edited posts/edited. but we know it:
                     .filter(post -> {

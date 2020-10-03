@@ -26,7 +26,7 @@ sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
 def summarize_text_with_lex_rank(doc):
     summary = lxr.get_prediction_lex_rank(doc.text)
     processedIn = int(round(time.time() * 1000))
-    return summarizer_pb2.TextToSummary(id=doc.id, text=doc.text, summary=summary, processedIn=str(processedIn))
+    return summarizer_pb2.DataToUpdate(id=doc.id, summary=summary, processedIn=processedIn)
 
 
 # gRPC server implementation:
@@ -35,7 +35,7 @@ class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
     # override service method:
     def summarize(self, request, context):
         # get data from request:
-        docs = request.textToSummary
+        docs = request.textToSummarize
 
         logging.info('Processing of %s text(s)', len(docs))
 
@@ -45,7 +45,7 @@ class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
             .collect()
 
         # return SummarizeResponse:
-        return summarizer_pb2.SummarizeResponse(textToSummary=updated_docs)
+        return summarizer_pb2.SummarizeResponseDTO(dataToUpdate=updated_docs)
 
 
 # server startup:

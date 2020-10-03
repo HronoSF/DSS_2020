@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.hronosf.relationship.extractor";
+option java_outer_classname = "RelationshipExtractorServiceProto";
+
+package com.hronosf.relationship.extractor;
+
+service RelationshipExtractor {
+  rpc extractRelation(RelationshipExtractorRequestDTO) returns (RelationshipExtractorResponseDTO){}
+}
+
+message RelationshipExtractorRequestDTO{
+  repeated TextToExtract textToExtract = 1;
+}
+
+message RelationshipExtractorResponseDTO{
+  repeated DataToUpdate dataToUpdate = 1;
+}
+
+message TextToExtract{
+  string id = 1;
+  string text = 2 ;
+}
+
+message DataToUpdate{
+  string id = 1;
+  string relationMap = 2;
+  int64 processedIn = 3;
+}

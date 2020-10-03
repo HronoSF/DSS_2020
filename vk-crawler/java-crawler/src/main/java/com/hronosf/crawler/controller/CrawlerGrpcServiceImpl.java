@@ -15,12 +15,12 @@ public class CrawlerGrpcServiceImpl extends CrawlerImplBase {
     private final TaskOrchestrationService taskOrchestrationService;
 
     @Override
-    public void startCrawling(StartParsingRequest request, StreamObserver<CrawlerJobStatus> responseObserver) {
+    public void startCrawling(StartParsingRequestDTO request, StreamObserver<CrawlerJobStatusDTO> responseObserver) {
         // start crawling:
         Map<String, String> crawlingJobsStatuses = taskOrchestrationService.startRecursiveCrawlingJob(request.getToParseList());
 
         // build response:
-        CrawlerJobStatus response = CrawlerJobStatus.newBuilder()
+        CrawlerJobStatusDTO response = CrawlerJobStatusDTO.newBuilder()
                 .putAllDomainToStatus(crawlingJobsStatuses)
                 .build();
 

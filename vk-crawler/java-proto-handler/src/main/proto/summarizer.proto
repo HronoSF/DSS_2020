@@ -7,20 +7,24 @@ option java_outer_classname = "SummarizerServiceProto";
 package com.hronosf.summarizer;
 
 service Summarizer {
-  rpc summarize(SummarizeRequest) returns (SummarizeResponse){}
+  rpc summarize(SummarizeRequestDTO) returns (SummarizeResponseDTO){}
 }
 
-message SummarizeRequest{
-  repeated TextToSummary textToSummary = 1;
+message SummarizeRequestDTO{
+  repeated TextToSummarize textToSummarize = 1;
 }
 
-message SummarizeResponse{
-  repeated TextToSummary textToSummary = 1;
+message SummarizeResponseDTO{
+  repeated DataToUpdate dataToUpdate = 1;
 }
 
-message TextToSummary{
+message TextToSummarize{
   string id = 1;
-  string text = 2 ;
-  string summary = 3 ;
-  string processedIn= 4;
+  string text = 2;
+}
+
+message DataToUpdate{
+  string id = 1;
+  string summary = 2;
+  int64 processedIn = 3;
 }

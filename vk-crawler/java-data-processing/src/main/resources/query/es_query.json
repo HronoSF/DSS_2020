@@ -1,0 +1,44 @@
+{
+  "_source": [
+    "id",
+    "text",
+    "from_id",
+    "signed_id"
+  ],
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must_not": {
+              "exists": {
+                "field": "processedIn"
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "filter": [
+              {
+                "exists": {
+                  "field": "processedIn"
+                }
+              },
+              {
+                "exists": {
+                  "field": "edited"
+                }
+              },
+              {
+                "script": {
+                  "script": "doc['edited'].value >= doc['processedIn'].value"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

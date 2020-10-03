@@ -1,5 +1,6 @@
 package com.hronosf.dataprocessing.job;
 
+import com.hronosf.dataprocessing.services.RelationshipExtractorServiceConnector;
 import com.hronosf.dataprocessing.services.SummarizerServiceConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ import java.util.Map;
 public class ScheduledDataProcessingJob {
 
     @Value(
-            "#{T(com.hronosf.dataprocessing.util.ResourceReader).readFileToString('classpath:es_query.json')}"
+            "#{T(com.hronosf.dataprocessing.util.ResourceReader).readFileToString('classpath:query/es_query.json')}"
     )
     private String esQuery;
 
@@ -28,6 +29,7 @@ public class ScheduledDataProcessingJob {
 
     private final JavaSparkContext sc;
     private final SummarizerServiceConnector summarizerConnector;
+    private final RelationshipExtractorServiceConnector relationshipExtractorConnector;
 
     @Async
     @Scheduled(cron = "${cron.expression}")
@@ -40,6 +42,7 @@ public class ScheduledDataProcessingJob {
         log.info("Extracted {} documents from ES", wallPosts.count());
 
         // call for neural nets work:
-        summarizerConnector.summarizeText(wallPosts);
+        summarizerConnector.processData(wallPosts);
+        relationshipExtractorConnector.processData(wallPosts);
     }
 }

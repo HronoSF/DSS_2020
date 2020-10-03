@@ -1,9 +1,10 @@
 package com.hronosf.searchengine.services;
 
-import com.hronosf.search.SearchRequest;
-import com.hronosf.search.SearchResponse;
+import com.hronosf.search.*;
 
 public interface ElasticSearchService {
 
-    SearchResponse searchWithText(SearchRequest text);
+    TextSearchResponseDTO searchWithText(TestSearchRequestDTO text);
+
+    IdSearchResponseDTO searchWithId(IdSearchRequestDTO text);
 }

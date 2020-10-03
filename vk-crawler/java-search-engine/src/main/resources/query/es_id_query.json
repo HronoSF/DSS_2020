@@ -1,0 +1,35 @@
+{
+  "_source": [
+    "relationMap",
+    "from_id",
+    "signed_id"
+  ],
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "bool": {
+            "must": {
+              "terms": {
+                "fromId": [
+                  "%s"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "must": {
+              "terms": {
+                "signerId": [
+                  "%s"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

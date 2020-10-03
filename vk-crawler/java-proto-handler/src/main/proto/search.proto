@@ -7,29 +7,40 @@ option java_outer_classname = "SearchServiceProto";
 package com.hronosf.search;
 
 service Search {
-  rpc search(SearchRequest) returns (SearchResponse){}
+  rpc searchWithText(TestSearchRequestDTO) returns (TextSearchResponseDTO){}
+  rpc searchWithId(IdSearchRequestDTO) returns (IdSearchResponseDTO){}
 }
 
-message SearchRequest{
+message TestSearchRequestDTO{
   string textToSearch = 1;
   int32 page = 2;
   int32 size = 3;
 }
 
-message SearchResponse{
+message TextSearchResponseDTO{
   repeated WallPost content = 1;
+}
+
+message IdSearchRequestDTO{
+  string idToSearch = 1;
+}
+
+message IdSearchResponseDTO{
+  int64 fromId = 1;
+  int64 signerId = 2;
+  repeated ObjectToRelation relationMap = 3;
 }
 
 message WallPost{
   string id = 1 ;
-  string  fromId = 2;
-  string  ownerId = 3;
-  string  signerId = 4;
+  int64  fromId = 2;
+  int64  ownerId = 3;
+  int64  signerId = 4;
   string  text = 5;
-  string  edited = 6;
-  string  date = 7;
+  int64  edited = 6;
+  int64  date = 7;
   string summary = 8;
-  string  processedIn = 9;
+  int64  processedIn = 9;
   repeated ObjectToRelation relationMap = 10;
 }
 

@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface SummarizerServiceConnector {
 
-    void summarizeText(JavaRDD<Map<String, Object>> toSummarize);
+    void processData(JavaRDD<Map<String, Object>> toSummarize);
 }
