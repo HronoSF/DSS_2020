@@ -43,6 +43,10 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
         elasticSearchWrapperService = BeanUtilService.getBean(ElasticSearchWrapperService.class);
     }
 
+    protected abstract void moveOffset();
+
+    protected abstract VkResponseDto executeCrawlingLogic() throws ClientException, JsonProcessingException, ApiException;
+
     @Override
     @SneakyThrows
     public void run() {
@@ -59,11 +63,6 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
     public void cancel() {
         isTaskStopped.setTrue();
     }
-
-
-    protected abstract void moveOffset();
-
-    protected abstract VkResponseDto executeCrawlingLogic() throws ClientException, JsonProcessingException, ApiException;
 
     protected void crawlWallWithOffset() throws InterruptedException {
         // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
@@ -114,7 +113,7 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
                 CrawlerStateStorage.saveCrawlerState(domain, offset);
                 return;
             }
-            // move:
+            // move offset:
             moveOffset();
 
         } catch (ClientException ex) {
@@ -142,6 +141,8 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
             log.info("Exception occurred while crawling https://vk.com/{}, offset {}", domain, offset);
             isTaskStopped.setTrue();
         }
+        // if after retrying was success:
+        retryAttemptCount = 0;
 
         // save progress:
         CrawlerStateStorage.updateCrawlerProgress(domain, new ProgressInfo().setCurrentOffset(offset).setTotal(wallPostCount));
