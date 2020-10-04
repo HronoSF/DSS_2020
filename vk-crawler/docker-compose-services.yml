@@ -5,37 +5,65 @@ networks:
     external: true
     
 services:
-  # java-crawler:
-  #   container_name: java-crawler
-  #   build:
-  #     dockerfile: java-crawler/Dockerfile
-  #     context: .
-  #     args:
-  #         VK_APP_KEY: 8316dfb98316dfb98316dfb9ee836518c6883168316dfb9dc4e32d3d3de2f857ccbd94e
-  #         VK_APP_ID: 7587711
-  #   ports:
-  #     - "9090:9090"
-  #   networks:
-  #     - vk-crawler_crawler_internal
-  #   depends_on: 
-  #     java-data-processing
-      
+
+  java-crawler:
+    container_name: java-crawler
+    build:
+      dockerfile: java-crawler/Dockerfile
+      context: .
+      args:
+          VK_APP_KEY: 8316dfb98316dfb98316dfb9ee836518c6883168316dfb9dc4e32d3d3de2f857ccbd94e
+          VK_APP_ID: 7587711
+    ports:
+      - "9090:9090"
+      - "8080:8080"
+    networks:
+      - vk-crawler_crawler_internal
+    depends_on: 
+       - java-data-processing
+    restart: on-failure
+
+  java-data-processing:
+    container_name: java-data-processing
+    build:
+      dockerfile: java-data-processing/Dockerfile
+      context: .
+    networks:
+      - vk-crawler_crawler_internal
+    depends_on: 
+      - python-summarization-service
+      - python-relationship-extractor-service
+    restart: on-failure
+
+  java-search-engine:
+    container_name: java-search-engine
+    build:
+      dockerfile: java-search-engine/Dockerfile
+      context: .
+    ports:
+        - "9091:9091"
+        - "8081:8080"
+    networks:
+        - vk-crawler_crawler_internal
+    restart: on-failure
+    
+  python-relationship-extractor-service:
+    container_name:  python-relationship-extractor-service
+    build:
+        dockerfile: python-relationship-extractor/Dockerfile
+        context: .
+    ports:
+          - "6067:6067"
+    networks:
+      - vk-crawler_crawler_internal
+    restart: on-failure
+  
   python-summarization-service:
     container_name: python-summarization-service
     build:
         dockerfile: python-summarizer/Dockerfile
         context: .
     ports:
-          - "6066:6066"
-    # networks:
-    #   - vk-crawler_crawler_internal
-
-  # java-data-processing:
-  #   container_name: java-data-processing
-  #   build:
-  #     dockerfile: java-data-processing/Dockerfile
-  #     context: .
-  #   networks:
-  #     - vk-crawler_crawler_internal
-  #   depends_on: 
-  #     - python-summarization-service
+            - "6066:6066"
+    networks:
+       - vk-crawler_crawler_internal

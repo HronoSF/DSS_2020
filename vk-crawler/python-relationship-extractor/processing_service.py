@@ -2,7 +2,6 @@ import re
 import nltk
 import json
 import logging
-import pymystem3
 from navec import Navec
 from slovnet import Syntax
 from pymystem3 import Mystem

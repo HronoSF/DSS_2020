@@ -15,7 +15,7 @@ RUN cd /app/src/main/proto \
 
 # stage 3: run python service
 FROM python:3.7
-COPY --from=clone /root/project/python-summarizer/ /app/
+COPY --from=clone /root/project/python-relationship-extractor/ /app/
 COPY --from=protobuf-build /root/python_proto/ /app/
 EXPOSE 6066
 WORKDIR /app
