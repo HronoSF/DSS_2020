@@ -16,7 +16,7 @@ services:
           VK_APP_ID: 7587711
     ports:
       - "9090:9090"
-      - "8080:8080"
+      - "9087:8080"
     networks:
       - vk-crawler_crawler_internal
     depends_on: 
@@ -42,7 +42,7 @@ services:
       context: .
     ports:
         - "9091:9091"
-        - "8081:8080"
+        - "9092:8080"
     networks:
         - vk-crawler_crawler_internal
     restart: on-failure
@@ -53,7 +53,7 @@ services:
         dockerfile: python-relationship-extractor/Dockerfile
         context: .
     ports:
-          - "6067:6067"
+      - "6067:6067"
     networks:
       - vk-crawler_crawler_internal
     restart: on-failure
@@ -64,6 +64,6 @@ services:
         dockerfile: python-summarizer/Dockerfile
         context: .
     ports:
-            - "6066:6066"
+      - "6066:6066"
     networks:
        - vk-crawler_crawler_internal
