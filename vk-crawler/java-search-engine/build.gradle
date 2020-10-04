@@ -21,6 +21,7 @@ repositories {
 dependencies {
     // Spring:
     implementation 'net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.4.RELEASE'
     // Lombok:
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

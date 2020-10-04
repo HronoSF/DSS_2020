@@ -22,6 +22,7 @@ dependencies {
     // Spring:
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.4.RELEASE'
     // Spring-Data Elasticsearch:
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.3.3.RELEASE'
     // VK api:

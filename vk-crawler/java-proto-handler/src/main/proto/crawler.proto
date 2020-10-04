@@ -7,13 +7,29 @@ option java_outer_classname = "CrawlerServiceProto";
 package com.hronosf.crawler.controller;
 
 service Crawler {
-  rpc startCrawling(StartParsingRequestDTO) returns (CrawlerJobStatusDTO){}
+  rpc startCrawlingAsUserActor(StartParsingAsUserRequestDTO) returns (CrawlerJobStatusDTO){}
+  rpc startCrawlingAsServiceActor(StartParsingAsServiceRequestDTO) returns (CrawlerJobStatusDTO){}
+  rpc getCrawlerProgress(GetCrawlerProgressByDomainsRequestDTO) returns (CrawlerProgressByDomainsResponseDTO){}
 }
 
-message StartParsingRequestDTO{
+message StartParsingAsServiceRequestDTO{
   repeated string toParse = 1;
+}
+
+message StartParsingAsUserRequestDTO{
+  int32 userId = 1;
+  string accessKey = 2 ;
+  repeated string toParse = 3;
 }
 
 message CrawlerJobStatusDTO{
   map<string, string> domainToStatus = 1;
+}
+
+message GetCrawlerProgressByDomainsRequestDTO{
+  // required for .proto
+}
+
+message CrawlerProgressByDomainsResponseDTO{
+  map<string, double> domainToProgressPercents = 1;
 }
