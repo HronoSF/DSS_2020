@@ -7,6 +7,13 @@
 2. docker-compose -f docker-compose-ui.yml up -d --build
 3. docker-compose -f docker-compose-services.yml up -d --build
 
+
+**Or use bash script:**
+<br>
+
+1. open git bash (if you have Windows) or bash (if Unix)
+2. ./run.sh up --build
+
 **How to use:**
 1. start up
 2. go to [admin app](http://localhost:4201)
