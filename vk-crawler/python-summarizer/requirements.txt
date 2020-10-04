@@ -1,15 +1,8 @@
-re
-os
-time
-json
 nltk
 navec
 razdel
-pickle
 grpcio
 pyspark
 slovnet
-logging
 pymystem3
-dostoevsky
 grpcio-tools
