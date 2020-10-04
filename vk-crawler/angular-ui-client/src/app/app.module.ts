@@ -11,10 +11,22 @@ import {SearchClientFactory} from './search-proto-service-factory';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SearchService} from './app.service';
 import {NgxGraphModule} from '@swimlane/ngx-graph';
+import {MatCheckboxModule} from '@angular/material';
+import {AuthService} from './auth.service';
+import {VkSearchService} from './vk-search.service';
+import {RouterModule, Routes} from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
+import { ClientComponent } from './client/client.component';
 
+
+const appRoutes: Routes = [
+  { path: '', component: ClientComponent},
+  { path: '**', component: ClientComponent }
+];
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ClientComponent
   ],
   imports: [
     BrowserModule,
@@ -25,11 +37,16 @@ import {NgxGraphModule} from '@swimlane/ngx-graph';
     MatInputModule,
     MatButtonModule,
     NoopAnimationsModule,
-    NgxGraphModule
+    NgxGraphModule,
+    MatCheckboxModule,
+    HttpClientModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     { provide: SearchClient, useFactory: SearchClientFactory },
-    SearchService
+    SearchService,
+    AuthService,
+    VkSearchService
   ],
   bootstrap: [AppComponent]
 })

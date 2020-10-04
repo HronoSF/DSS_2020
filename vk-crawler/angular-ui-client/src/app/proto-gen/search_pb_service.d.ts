@@ -4,18 +4,28 @@
 import * as search_pb from "./search_pb";
 import {grpc} from "@improbable-eng/grpc-web";
 
-type Searchsearch = {
+type SearchsearchWithText = {
   readonly methodName: string;
   readonly service: typeof Search;
   readonly requestStream: false;
   readonly responseStream: false;
-  readonly requestType: typeof search_pb.SearchRequest;
-  readonly responseType: typeof search_pb.SearchResponse;
+  readonly requestType: typeof search_pb.TestSearchRequestDTO;
+  readonly responseType: typeof search_pb.TextSearchResponseDTO;
+};
+
+type SearchsearchWithId = {
+  readonly methodName: string;
+  readonly service: typeof Search;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof search_pb.IdSearchRequestDTO;
+  readonly responseType: typeof search_pb.IdSearchResponseDTO;
 };
 
 export class Search {
   static readonly serviceName: string;
-  static readonly search: Searchsearch;
+  static readonly searchWithText: SearchsearchWithText;
+  static readonly searchWithId: SearchsearchWithId;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -50,14 +60,23 @@ export class SearchClient {
   readonly serviceHost: string;
 
   constructor(serviceHost: string, options?: grpc.RpcOptions);
-  search(
-    requestMessage: search_pb.SearchRequest,
+  searchWithText(
+    requestMessage: search_pb.TestSearchRequestDTO,
     metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: search_pb.SearchResponse|null) => void
+    callback: (error: ServiceError|null, responseMessage: search_pb.TextSearchResponseDTO|null) => void
   ): UnaryResponse;
-  search(
-    requestMessage: search_pb.SearchRequest,
-    callback: (error: ServiceError|null, responseMessage: search_pb.SearchResponse|null) => void
+  searchWithText(
+    requestMessage: search_pb.TestSearchRequestDTO,
+    callback: (error: ServiceError|null, responseMessage: search_pb.TextSearchResponseDTO|null) => void
+  ): UnaryResponse;
+  searchWithId(
+    requestMessage: search_pb.IdSearchRequestDTO,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: search_pb.IdSearchResponseDTO|null) => void
+  ): UnaryResponse;
+  searchWithId(
+    requestMessage: search_pb.IdSearchRequestDTO,
+    callback: (error: ServiceError|null, responseMessage: search_pb.IdSearchResponseDTO|null) => void
   ): UnaryResponse;
 }
 

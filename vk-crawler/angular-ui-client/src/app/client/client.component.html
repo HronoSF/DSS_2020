@@ -1,0 +1,68 @@
+<div class="search-container" xmlns:svg="">
+  <form class="search-form" [formGroup]="searchForm" (submit)="search()">
+    <div class="form-field">
+      <mat-form-field class="example-full-width">
+        <mat-label>Community name</mat-label>
+        <input matInput formControlName="texttosearch" placeholder="Лентач" [type]="searchForm.value.searchWithId ? 'number' : 'text'">
+      </mat-form-field>
+      <button mat-raised-button  color="primary" type="submit">Search</button>
+    </div>
+
+    <div class="form-checkbox">
+      <mat-checkbox formControlName="searchWithId">Search with user or group id</mat-checkbox>
+    </div>
+  </form>
+  <div class="result-container">
+
+    <div class="text-response__container" *ngIf = "showTextResponse">
+      <ng-container *ngFor="let post of textResponse.contentList">
+        <div class="author__container">
+          <div class="photo">
+          </div>
+          <div class="name">{{post.fromid}}</div>
+        </div>
+        <div class="text">{{post.text}}</div>
+        <div class="summary">{{post.summary}}</div>
+      </ng-container>
+    </div>
+
+    <div class="id-response__container" *ngIf="showIdResponse">
+      <ng-container *ngTemplateOutlet="graphTemplate"></ng-container>
+    </div>
+
+    <ng-template #graphTemplate>
+      <div class="graph__container" *ngFor="let graphData of graphsData">
+        <ngx-graph
+          class="chart-container"
+          [view]="[500, 500]"
+          [links]="graphData.edges"
+          [nodes]="graphData.graphNodes"
+          [draggingEnabled]="false"
+          [panningEnabled]="false"
+          [enableZoom]="false"
+        >
+
+          <ng-template #nodeTemplate let-node>
+            <svg:g class="node">
+              <svg:rect [attr.width]="node.dimension.width" [attr.height]="node.dimension.height" [attr.fill]="node.data.color" />
+              <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">{{node.label}}</svg:text>
+            </svg:g>
+          </ng-template>
+
+          <ng-template #linkTemplate let-link>
+            <svg:g class="edge">
+              <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
+              </svg:path>
+              <svg:text class="edge-label" text-anchor="middle">
+                <textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                  {{link.label}}
+                </textPath>
+              </svg:text>
+            </svg:g>
+          </ng-template>
+        </ngx-graph>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
