@@ -8,4 +8,4 @@
 3. docker-compose -f docker-compose-services.yml up -d --build
 
 <br>**Project infrastructure:**<br><br>
-![alt text](./vk-crawler/readme-data/infra.jpg)
+![alt text](./readme-data/infra.jpg)
