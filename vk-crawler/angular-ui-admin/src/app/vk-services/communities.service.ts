@@ -38,7 +38,7 @@ export class CommunitiesService {
   public searchUsers(request, offset: number, count: number): Observable<VkCommonResponse<VkUsersResponse>> {
     console.log(request.query);
     return this.http
-      .get<VkCommonResponse<VkUsersResponse>>(`${proxyForAPIRequest}/users.search?q=${request.query}&access_token=${this.authService.vkAccessToken.access_token}&offset=${offset}&count=${count}&fields=photo&v=5.54`);
+      .get<VkCommonResponse<VkUsersResponse>>(`${proxyForAPIRequest}/users.search?q=${request.query}&access_token=${this.authService.vkAccessToken.access_token}&offset=${offset}&count=${count}&fields=photo,domain&v=5.54`);
   }
 
 
@@ -61,7 +61,8 @@ export class CommunitiesService {
   }
 
   public startCrawling(): Observable<CrawlerJobStatusDTO.AsObject> {
-    const idsList = this.chosenGroups.map(group => group.id.toString()).concat(this.chosenUsers.map(user => user.id.toString()));
+    const idsList = this.chosenGroups.map(group => group.screen_name.toString()).concat(this.chosenUsers.map(user => user.domain.toString()));
+    console.log(idsList);
     const request = new StartParsingAsServiceRequestDTO();
     request.setToparseList(idsList);
 
