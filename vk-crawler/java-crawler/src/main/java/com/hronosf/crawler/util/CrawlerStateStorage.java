@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class CrawlerStateStorage {
 
+    private static final Map<String, String> domainToError = new ConcurrentHashMap<>();
     private static final Map<String, Integer> domainToOffset = new ConcurrentHashMap<>();
     private static final Map<String, Double> domainToProgress = new ConcurrentHashMap<>();
 
@@ -30,5 +31,13 @@ public class CrawlerStateStorage {
 
     public static Map<String, Double> getCrawlerProgressByDomain() {
         return domainToProgress;
+    }
+
+    public static synchronized void saveErrorToNotifyAdmin(String domain, String errorMessage) {
+        domainToError.put(domain, errorMessage);
+    }
+
+    public static synchronized Map<String, String> getCrawlerErrorsToNotify() {
+        return domainToError;
     }
 }

@@ -22,6 +22,7 @@ dependencies {
     // Spring:
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'net.devh:grpc-server-spring-boot-starter:2.10.1.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.3.4.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.3.4.RELEASE'
     // Spring-Data Elasticsearch:
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.3.3.RELEASE'
@@ -34,6 +35,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     // Proto part:
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Email - sender:
+    compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 }
 
 configurations {

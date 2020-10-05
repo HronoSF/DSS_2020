@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hronosf.crawler.domain.WallPost;
 import com.hronosf.crawler.dto.vk.Response;
 import com.hronosf.crawler.dto.vk.VkResponseDto;
+import com.hronosf.crawler.exceptions.CrawlerException;
 import com.hronosf.crawler.services.ElasticSearchWrapperService;
 import com.hronosf.crawler.util.*;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -57,6 +58,9 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
         }
 
         log.info("Stop parsing https://vk.com/{}", domain);
+
+        // join crawler thread to re-use it for another domain after parsing stopped:
+        Thread.currentThread().join();
     }
 
     @Override
@@ -65,26 +69,26 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
     }
 
     protected void crawlWallWithOffset() throws InterruptedException {
-        // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
-        if (parsedPosts.size() >= 500) {
-            saveToElasticSearch();
-        }
-
-        // parse new posts if they are && start with saved offset if crawling were interrupted:
-        Integer offsetToStart = CrawlerStateStorage.getCrawlerState(domain);
-        if (offsetToStart != null && !parsedPosts.isEmpty()) {
-            // save new posts to Es:
-            int newPostCount = saveToElasticSearch();
-
-            // move offset to position before interruption:
-            offset = 0;
-            offset += offsetToStart + newPostCount;
-
-            // clean up state:
-            CrawlerStateStorage.removeDomainFromCache(domain);
-        }
-
         try {
+            // TrashHold - if parsed post count >=500 save to ElasticSearch && clean temporary store:
+            if (parsedPosts.size() >= 500) {
+                saveToElasticSearch();
+            }
+
+            // parse new posts if they are && start with saved offset if crawling were interrupted:
+            Integer offsetToStart = CrawlerStateStorage.getCrawlerState(domain);
+            if (offsetToStart != null && !parsedPosts.isEmpty()) {
+                // save new posts to Es:
+                int newPostCount = saveToElasticSearch();
+
+                // move offset to position before interruption:
+                offset = 0;
+                offset += offsetToStart + newPostCount;
+
+                // clean up state:
+                CrawlerStateStorage.removeDomainFromCache(domain);
+            }
+
             VkResponseDto vkRestResponse = executeCrawlingLogic();
 
             // Parse response:
@@ -138,7 +142,13 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
                 moveOffset();
             }
         } catch (Exception ex) {
-            log.info("Exception occurred while crawling https://vk.com/{}, offset {}", domain, offset);
+            String exceptionMessage = ex.getMessage();
+            log.info("Exception occurred while crawling https://vk.com/{}, offset {}: \n{}", domain, offset, exceptionMessage);
+
+            // save error to send admin report:
+            CrawlerStateStorage.saveErrorToNotifyAdmin(domain, exceptionMessage);
+
+            // stop crawler:
             isTaskStopped.setTrue();
         }
         // if after retrying was success:
@@ -148,14 +158,14 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
         CrawlerStateStorage.updateCrawlerProgress(domain, new ProgressInfo().setCurrentOffset(offset).setTotal(wallPostCount));
     }
 
-    private int saveToElasticSearch() {
+    private int saveToElasticSearch() throws CrawlerException {
         // save new posts:
-        int newPostsCount = 0;
+        int newPostsCount;
 
         try {
             newPostsCount = elasticSearchWrapperService.saveOnlyNewOrChangedPosts(parsedPosts);
         } catch (Exception ex) {
-            log.error("Data Base error occurred while saving crawled posts:\n {}", ex.getMessage());
+            throw new CrawlerException("DB error occurred, crawler will be stop. Fix db issue! \n{}", ex.getMessage());
         }
 
         // clear temporary storage:
