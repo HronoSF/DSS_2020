@@ -38,7 +38,7 @@ export class CommunitiesService {
   public searchUsers(request, offset: number, count: number): Observable<VkCommonResponse<VkUsersResponse>> {
     console.log(request.query);
     return this.http
-      .get<VkCommonResponse<VkUsersResponse>>(`${proxyForAPIRequest}/users.search?q=${request.query}&access_token=${this.authService.vkAccessToken.access_token}&offset=${offset}&count=${count}&fields=photo,domain&v=5.54`);
+      .get<VkCommonResponse<VkUsersResponse>>(`${proxyForAPIRequest}/users.search?q=${request.query}&access_token=${this.authService.vkAccessToken.access_token}&offset=${offset}&count=${count}&fields=photo,domain,is_closed&v=5.124`);
   }
 
 

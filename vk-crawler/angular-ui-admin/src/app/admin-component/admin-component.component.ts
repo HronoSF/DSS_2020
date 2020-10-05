@@ -65,7 +65,7 @@ export class AdminComponentComponent implements OnInit {
         console.log(groups, users);
         this.groupsResult = groups.response.items.filter(item => item.is_closed === 0);
         this.groupsResultCount = groups.response.count;
-        this.usersResult = users.response.items;
+        this.usersResult = users.response.items.filter(item => !item.is_closed);
         this.usersResultCount = users.response.count;
       });
     }
@@ -93,7 +93,7 @@ export class AdminComponentComponent implements OnInit {
   public onUsersPageChange(event: PageEvent) {
     this.usersOffset = event.pageIndex * this.count;
     this.communitiesService.searchUsers(this.searchForm.value, this.usersOffset, this.count).subscribe(response => {
-      this.usersResult = response.response.items;
+      this.usersResult = response.response.items.filter(item => !item.is_closed);
     });
   }
 

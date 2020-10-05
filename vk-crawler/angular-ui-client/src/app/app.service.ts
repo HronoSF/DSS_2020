@@ -41,6 +41,7 @@ export class SearchService {
         if (error) {
           observer.error(new Error(error.message));
         } else {
+          console.log(response.toObject());
           const result = response.toObject();
           observer.next(result);
           observer.complete();

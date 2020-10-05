@@ -5,4 +5,5 @@ export interface VkUsersResponse {
   screen_name: string;
   photo: string;
   domain: string;
+  is_closed: boolean;
 }

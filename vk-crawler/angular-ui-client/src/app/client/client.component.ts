@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SearchService} from '../app.service';
-import * as shape from 'd3-shape';
 import {IdSearchResponseDTO, ObjectToRelation, TextSearchResponseDTO, WallPost} from '../proto-gen/search_pb';
 import {catchError, switchMap} from 'rxjs/operators';
 import {throwError, zip} from 'rxjs';
@@ -10,8 +9,6 @@ import {ActivatedRoute} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {vkOpenAuthDialogURL} from '../const';
 import {VkGroupsResponse, VkSearchService, VkUsersResponse} from '../vk-search.service';
-import {DagreLayout} from '@swimlane/ngx-graph/lib/graph/layouts/dagre';
-import {PageEvent} from '@angular/material';
 
 interface GraphData {
   edges: Edge[];
@@ -26,9 +23,9 @@ interface GraphData {
 export class ClientComponent implements OnInit {
   title = 'Search';
   searchForm: FormGroup;
-  textResponse: TextSearchResponseDTO.AsObject;
-  idResponse: IdSearchResponseDTO.AsObject;
-  graphsData: GraphData[] = [];
+  textResponse: any;
+  idResponse: any;
+  graphsData: {relation: string, objects: string[]}[];
 
   groupIds: string[] = [];
   userIds: string[] = [];
@@ -43,6 +40,8 @@ export class ClientComponent implements OnInit {
   size = 20;
 
   vkOpenAuthURL = vkOpenAuthDialogURL;
+
+
 
   constructor(
     private searchService: SearchService,
@@ -87,9 +86,11 @@ export class ClientComponent implements OnInit {
         switchMap((result) => {
           console.log(result);
           this.textResponse = result;
-          this.graphsData = this.getGraphsFromTextResponse(result);
+          this.textResponse.contentList.forEach(resp => {
+            resp.relationmapList = this.getGraphs(resp.relationmapList);
+          });
+          console.log(this.textResponse);
           this.getUsersAndGroupsIds(result.contentList);
-          console.log(this.groupIds, this.userIds.join(','));
           return zip(this.vkSearchService.getGroups(this.groupIds.join(',')), this.vkSearchService.getUsers(this.userIds.join(',')));
         }  ),
         catchError(error => {
@@ -115,8 +116,8 @@ export class ClientComponent implements OnInit {
           this.userIds = [];
           this.groupIds = [];
           this.idResponse = result;
-          this.graphsData = this.getGraphFormIdResponse(result);
-          console.log(this.graphsData);
+          console.log(result);
+          this.idResponse.relationmapList = this.getGraphs(this.idResponse.relationmapList);
           if (result.fromid.toString().includes('-')) {
             this.groupIds.push(result.fromid.toString().replace('-', ''));
           } else {
@@ -129,11 +130,12 @@ export class ClientComponent implements OnInit {
         }
         )
       ).subscribe(([groupsMap, usersMap]) => {
-      this.groupsMap = groupsMap;
-      this.usersMap = usersMap;
-      this.textResponse = null;
-      this.showTextResponse = false;
-      this.showIdResponse = true;
+        console.log(groupsMap, usersMap);
+        this.groupsMap = groupsMap;
+        this.usersMap = usersMap;
+        this.textResponse = null;
+        this.showTextResponse = false;
+        this.showIdResponse = true;
     });
   }
 
@@ -150,6 +152,19 @@ export class ClientComponent implements OnInit {
       graphData.push(this.getEdgesAndNodes(wallPost.relationmapList));
     });
     return graphData;
+  }
+
+  getGraphs(response: ObjectToRelation.AsObject[]): {relation: string, objects: string[]}[] {
+    const graph: {[key: string]: {relation: string, objects: string[]}} = {};
+    response.forEach(rel => {
+      if (!graph[rel.relation]) {
+        graph[rel.relation] = {relation: rel.relation, objects: [rel.object]};
+      } else {
+        graph[rel.relation].objects.push(rel.object);
+      }
+    });
+    return Object.values(graph);
+
   }
 
   getEdgesAndNodes(item: ObjectToRelation.AsObject[]) {
