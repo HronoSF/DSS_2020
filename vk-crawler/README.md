@@ -3,7 +3,7 @@
 (тексты из пуб. Страниц пользователей, постов в группах заданных администратором) + прослойка с ElasticSearch + микросервисы с нейронками выдающими краткую суть  текстов, пары персонаж - отношение,+ Клиент поиска постов и визуализации графа взаимо отношений пользователей к людям (вася не любит петю и дашу но обажает машу)
 
 **Demo:**
-[Youtube](https://youtu.be/MXfpYYRk6eI)
+[Youtube](https://www.youtube.com/watch?v=MXfpYYRk6eI)
 
 **For local startup:**
 1. docker-compose -f docker-compose-infra.yml up -d
