@@ -4,18 +4,38 @@
 import * as crawler_pb from "./crawler_pb";
 import {grpc} from "@improbable-eng/grpc-web";
 
-type CrawlerstartCrawling = {
+type CrawlerstartCrawlingAsUserActor = {
   readonly methodName: string;
   readonly service: typeof Crawler;
   readonly requestStream: false;
   readonly responseStream: false;
-  readonly requestType: typeof crawler_pb.StartParsingRequest;
-  readonly responseType: typeof crawler_pb.CrawlerJobStatus;
+  readonly requestType: typeof crawler_pb.StartParsingAsUserRequestDTO;
+  readonly responseType: typeof crawler_pb.CrawlerJobStatusDTO;
+};
+
+type CrawlerstartCrawlingAsServiceActor = {
+  readonly methodName: string;
+  readonly service: typeof Crawler;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof crawler_pb.StartParsingAsServiceRequestDTO;
+  readonly responseType: typeof crawler_pb.CrawlerJobStatusDTO;
+};
+
+type CrawlergetCrawlerProgress = {
+  readonly methodName: string;
+  readonly service: typeof Crawler;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof crawler_pb.GetCrawlerProgressByDomainsRequestDTO;
+  readonly responseType: typeof crawler_pb.CrawlerProgressByDomainsResponseDTO;
 };
 
 export class Crawler {
   static readonly serviceName: string;
-  static readonly startCrawling: CrawlerstartCrawling;
+  static readonly startCrawlingAsUserActor: CrawlerstartCrawlingAsUserActor;
+  static readonly startCrawlingAsServiceActor: CrawlerstartCrawlingAsServiceActor;
+  static readonly getCrawlerProgress: CrawlergetCrawlerProgress;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -50,14 +70,32 @@ export class CrawlerClient {
   readonly serviceHost: string;
 
   constructor(serviceHost: string, options?: grpc.RpcOptions);
-  startCrawling(
-    requestMessage: crawler_pb.StartParsingRequest,
+  startCrawlingAsUserActor(
+    requestMessage: crawler_pb.StartParsingAsUserRequestDTO,
     metadata: grpc.Metadata,
-    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatus|null) => void
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatusDTO|null) => void
   ): UnaryResponse;
-  startCrawling(
-    requestMessage: crawler_pb.StartParsingRequest,
-    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatus|null) => void
+  startCrawlingAsUserActor(
+    requestMessage: crawler_pb.StartParsingAsUserRequestDTO,
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatusDTO|null) => void
+  ): UnaryResponse;
+  startCrawlingAsServiceActor(
+    requestMessage: crawler_pb.StartParsingAsServiceRequestDTO,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatusDTO|null) => void
+  ): UnaryResponse;
+  startCrawlingAsServiceActor(
+    requestMessage: crawler_pb.StartParsingAsServiceRequestDTO,
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerJobStatusDTO|null) => void
+  ): UnaryResponse;
+  getCrawlerProgress(
+    requestMessage: crawler_pb.GetCrawlerProgressByDomainsRequestDTO,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerProgressByDomainsResponseDTO|null) => void
+  ): UnaryResponse;
+  getCrawlerProgress(
+    requestMessage: crawler_pb.GetCrawlerProgressByDomainsRequestDTO,
+    callback: (error: ServiceError|null, responseMessage: crawler_pb.CrawlerProgressByDomainsResponseDTO|null) => void
   ): UnaryResponse;
 }
 

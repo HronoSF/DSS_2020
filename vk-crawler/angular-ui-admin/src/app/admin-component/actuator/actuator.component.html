@@ -1,0 +1,18 @@
+<h2>Current progress</h2>
+<ng-container *ngIf="communitiesService.statuses">
+<div class="progress-bar__container" *ngFor="let status of communitiesService.statuses.domaintoprogresspercentsMap">
+<h5 class="example-h2">{{status[0]}}</h5>
+
+<section class="example-section">
+  <mat-progress-bar
+    class="example-margin"
+    [color]="color"
+    [mode]="'determinate'"
+    [value]="status[1]"
+    [bufferValue]="bufferValue">
+  </mat-progress-bar>
+</section>
+</div>
+</ng-container>
+
+<button mat-raised-button mat-dialog-close>Close</button>

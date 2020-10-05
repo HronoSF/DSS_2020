@@ -28,7 +28,65 @@ mat-form-field {
 }
 
 .result-container {
+  width: 600px;
+  height: 100%;
+  margin-top: 30px;
+}
 
-  width: 900px;
+.author__container {
+  display: flex;
+  justify-content: flex-start;
+}
+.photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+.name {
+  align-self: center;
+  color: #3f51b5;
+}
 
+.author__label, .text__label, .summary__label, .graph__label {
+  margin-bottom: 10px;
+  margin-top: 20px;
+  font-size: 18px;
+  color: gray;
+}
+
+.graph__label {
+  justify-self: flex-start;
+}
+.info_container {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.graph__container {
+  width: 80%;
+  align-self: center;
+}
+
+.text-response__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid gray;
+  border-radius: 36px;
+  background-color: aliceblue;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.id-response__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid gray;
+  border-radius: 36px;
+  background-color: aliceblue;
+  padding: 30px;
+  margin-bottom: 20px;
 }

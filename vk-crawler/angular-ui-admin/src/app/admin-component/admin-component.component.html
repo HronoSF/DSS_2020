@@ -1,7 +1,7 @@
 <h1>Welcome to Admin Service</h1>
 <h2>Search for communities to include to parsing session</h2>
 
-<div class="workarea-container">
+<button mat-button class="actuator-button" color="primary"  (click)="openActuatorDialog()" type="button" >Show progress</button>
 
 <div class="search-container">
   <form class="search-form" [formGroup]="searchForm" (submit)="search()">
@@ -9,7 +9,7 @@
   <mat-label>Community name</mat-label>
   <input matInput formControlName="query" placeholder="Лентач">
   </mat-form-field>
-    <button mat-raised-button  color="primary" type="submit" >Search</button>
+    <button mat-raised-button  color="primary" type="submit">Search</button>
   </form>
   <button
     mat-raised-button
@@ -57,13 +57,4 @@
   </div>
 
 </div>
-</div>
 
-<!--<div class="manage-container">-->
-<!--  <div class="included-communities-container">-->
-<!--    there will be included communities-->
-<!--  </div>-->
-<!--  <div class="parsing-communities-container">-->
-<!--    there will be communities in progress-->
-<!--  </div>-->
-<!--</div>-->

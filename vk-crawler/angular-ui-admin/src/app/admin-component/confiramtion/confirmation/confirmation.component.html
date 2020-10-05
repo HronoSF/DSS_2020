@@ -1,8 +1,10 @@
 <div class="modal-header">
-  <h1>Confirm you choice</h1>
+  <h1 *ngIf="step === 1">Confirm you choice</h1>
+  <h1 *ngIf="step === 2">Jobs status</h1>
+
 </div>
 
-<div class="result-container">
+<div class="result-container" *ngIf="step === 1">
   <div class="groups-result">
     <div class="one-item-container" *ngFor="let group of groups">
       <div class="item-photo-container" [ngStyle]="{'background-image': 'url(' + group.photo_50 + ')'}"></div>
@@ -22,7 +24,11 @@
   </div>
 </div>
 
+<div class="after-confirm" *ngIf="step === 2">
+  <div class="item-name" *ngFor="let res of result.domaintostatusMap">{{res[0]}} : {{res[1]}}</div>
+</div>
+
 <div class="footer">
   <button mat-raised-button [mat-dialog-close]="false">Close</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="true">Confirm</button>
+  <button mat-raised-button color="primary" [disabled]="step === 2" (click)="onConfirm()">Confirm</button>
 </div>

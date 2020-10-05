@@ -2,8 +2,10 @@
   <form class="search-form" [formGroup]="searchForm" (submit)="search()">
     <div class="form-field">
       <mat-form-field class="example-full-width">
-        <mat-label>Community name</mat-label>
-        <input matInput formControlName="texttosearch" placeholder="Лентач" [type]="searchForm.value.searchWithId ? 'number' : 'text'">
+        <mat-label>{{searchForm.value.searchWithId ? 'id пользователя или группы' : 'Текстовый запрос'}}</mat-label>
+        <input matInput formControlName="texttosearch"
+               [placeholder]="searchForm.value.searchWithId ? '184354531' : 'Удивительно милые котики удивительно мило спят'"
+               [type]="searchForm.value.searchWithId ? 'number' : 'text'">
       </mat-form-field>
       <button mat-raised-button  color="primary" type="submit">Search</button>
     </div>
@@ -14,33 +16,62 @@
   </form>
   <div class="result-container">
 
-    <div class="text-response__container" *ngIf = "showTextResponse">
-      <ng-container *ngFor="let post of textResponse.contentList">
+    <ng-container  *ngIf = "showTextResponse">
+    <div class="text-response__container" *ngFor="let post of textResponse.contentList">
+        <div class="info_container">
+        <div class="author__label">Автор:</div>
         <div class="author__container">
-          <div class="photo">
-          </div>
-          <div class="name">{{post.fromid}}</div>
+          <div class="photo" [ngStyle]="{'background-image': 'url(' + getPhoto(post.fromid) + ')'}"></div>
+          <div class="name">{{getName(post.fromid)}}</div>
         </div>
-        <div class="text">{{post.text}}</div>
-        <div class="summary">{{post.summary}}</div>
-      </ng-container>
-    </div>
+        <div class="text__label">Текст:</div>
+        <div class="text">
+          {{post.text}}</div>
 
-    <div class="id-response__container" *ngIf="showIdResponse">
+        <div class="summary__label">Краткое содержание:</div>
+
+        <div class="summary">
+          {{post.summary}}</div>
+        </div>
       <ng-container *ngTemplateOutlet="graphTemplate"></ng-container>
     </div>
+    </ng-container>
+
+    <div class="id-response__container" *ngIf="showIdResponse">
+      <div class="info_container">
+        <div class="author__label">Автор:</div>
+        <div class="author__container">
+          <div class="photo" [ngStyle]="{'background-image': 'url(' + getPhoto(idResponse.fromid) + ')'}"></div>
+          <div class="name">{{getName(idResponse.fromid)}}</div>
+        </div>
+      </div>
+      <ng-container *ngTemplateOutlet="graphTemplate"></ng-container>
+    </div>
+  </div>
+
+  <div class="paginator-container">
+    <mat-paginator
+      [pageSize]="20"
+      [pageSizeOptions]="[20]"
+      (page)="search($event)">
+    </mat-paginator>
+  </div>
 
     <ng-template #graphTemplate>
       <div class="graph__container" *ngFor="let graphData of graphsData">
+        <div class="graph__label">Граф отношений:</div>
         <ngx-graph
           class="chart-container"
-          [view]="[500, 500]"
           [links]="graphData.edges"
           [nodes]="graphData.graphNodes"
-          [draggingEnabled]="false"
-          [panningEnabled]="false"
-          [enableZoom]="false"
         >
+
+          <ng-template #defsTemplate>
+            <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+              <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+            </svg:marker>
+          </ng-template>
+
 
           <ng-template #nodeTemplate let-node>
             <svg:g class="node">
@@ -54,7 +85,11 @@
               <svg:path class="line" stroke-width="2" marker-end="url(#arrow)">
               </svg:path>
               <svg:text class="edge-label" text-anchor="middle">
-                <textPath class="text-path" [attr.href]="'#' + link.id" [style.dominant-baseline]="link.dominantBaseline" startOffset="50%">
+                <textPath
+                  class="text-path"
+                  [attr.href]="'#' + link.id"
+                  [style.dominant-baseline]="link.dominantBaseline"
+                  startOffset="50%">
                   {{link.label}}
                 </textPath>
               </svg:text>
@@ -64,5 +99,4 @@
       </div>
     </ng-template>
   </div>
-</div>
 

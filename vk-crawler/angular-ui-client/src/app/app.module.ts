@@ -11,12 +11,13 @@ import {SearchClientFactory} from './search-proto-service-factory';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {SearchService} from './app.service';
 import {NgxGraphModule} from '@swimlane/ngx-graph';
-import {MatCheckboxModule} from '@angular/material';
+import {MatCheckboxModule, MatPaginatorModule} from '@angular/material';
 import {AuthService} from './auth.service';
 import {VkSearchService} from './vk-search.service';
 import {RouterModule, Routes} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
 import { ClientComponent } from './client/client.component';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 
 const appRoutes: Routes = [
@@ -40,7 +41,9 @@ const appRoutes: Routes = [
     NgxGraphModule,
     MatCheckboxModule,
     HttpClientModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    MatPaginatorModule,
+    NgxPaginationModule
   ],
   providers: [
     { provide: SearchClient, useFactory: SearchClientFactory },

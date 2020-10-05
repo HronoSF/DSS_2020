@@ -13,6 +13,7 @@ import {PageEvent} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationComponent} from './confiramtion/confirmation/confirmation.component';
 import {MatCheckboxChange} from '@angular/material/checkbox';
+import {ActuatorComponent} from './actuator/actuator.component';
 
 @Component({
   selector: 'app-admin-component',
@@ -102,10 +103,6 @@ export class AdminComponentComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.communitiesService.startCrawling().subscribe(res => console.log(res));
-          // this.communitiesService.testGrpc().subscribe(res => console.log(res));
-        }
         console.log(`Dialog result: ${result}`);
       });
   }
@@ -116,5 +113,11 @@ export class AdminComponentComponent implements OnInit {
 
   public isGroupChecked(id: number): boolean {
     return !!this.communitiesService.chosenGroups.find(group => group.id === id);
+  }
+
+  openActuatorDialog() {
+    const dialogRef = this.dialog.open(ActuatorComponent, {
+      minWidth: '60%',
+    });
   }
 }

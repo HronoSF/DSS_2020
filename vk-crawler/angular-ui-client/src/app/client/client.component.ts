@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {SearchService} from '../app.service';
+import * as shape from 'd3-shape';
 import {IdSearchResponseDTO, ObjectToRelation, TextSearchResponseDTO, WallPost} from '../proto-gen/search_pb';
 import {catchError, switchMap} from 'rxjs/operators';
 import {throwError, zip} from 'rxjs';
@@ -9,6 +10,8 @@ import {ActivatedRoute} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {vkOpenAuthDialogURL} from '../const';
 import {VkGroupsResponse, VkSearchService, VkUsersResponse} from '../vk-search.service';
+import {DagreLayout} from '@swimlane/ngx-graph/lib/graph/layouts/dagre';
+import {PageEvent} from '@angular/material';
 
 interface GraphData {
   edges: Edge[];
@@ -20,10 +23,11 @@ interface GraphData {
   templateUrl: './client.component.html',
   styleUrls: ['./client.component.css']
 })
-export class ClientComponent implements OnInit{
+export class ClientComponent implements OnInit {
   title = 'Search';
   searchForm: FormGroup;
   textResponse: TextSearchResponseDTO.AsObject;
+  idResponse: IdSearchResponseDTO.AsObject;
   graphsData: GraphData[] = [];
 
   groupIds: string[] = [];
@@ -63,7 +67,7 @@ export class ClientComponent implements OnInit{
     }
   }
 
-  search() {
+  search(event: PageEvent) {
     if (this.searchForm.value.searchWithId) {
       this.searchWithId();
     } else {
@@ -77,8 +81,6 @@ export class ClientComponent implements OnInit{
         switchMap((result) => {
           console.log(result);
           this.textResponse = result;
-          this.showTextResponse = true;
-          this.showIdResponse = false;
           this.graphsData = this.getGraphsFromTextResponse(result);
           this.getUsersAndGroupsIds(result.contentList);
           console.log(this.groupIds, this.userIds.join(','));
@@ -91,6 +93,9 @@ export class ClientComponent implements OnInit{
       ).subscribe(([groupsMap, usersMap]) => {
         this.groupsMap = groupsMap;
         this.usersMap = usersMap;
+        this.idResponse = null;
+        this.showTextResponse = true;
+        this.showIdResponse = false;
     });
   }
 
@@ -101,10 +106,9 @@ export class ClientComponent implements OnInit{
       .pipe(
         switchMap(result => {
           console.log(result);
-          this.showTextResponse = false;
-          this.showIdResponse = true;
           this.userIds = [];
           this.groupIds = [];
+          this.idResponse = result;
           this.graphsData = this.getGraphFormIdResponse(result);
           console.log(this.graphsData);
           if (result.fromid.toString().includes('-')) {
@@ -121,6 +125,9 @@ export class ClientComponent implements OnInit{
       ).subscribe(([groupsMap, usersMap]) => {
       this.groupsMap = groupsMap;
       this.usersMap = usersMap;
+      this.textResponse = null;
+      this.showTextResponse = false;
+      this.showIdResponse = true;
     });
   }
 
@@ -172,5 +179,19 @@ export class ClientComponent implements OnInit{
     });
     this.groupIds = Array.from(new Set(groupsIds));
     this.userIds = Array.from(new Set(usersIds));
+  }
+
+  getPhoto(fromid) {
+    if (fromid.toString().includes('-')) {
+      return this.groupsMap[fromid.toString().replace('-', '')].photo_50;
+    }
+    return this.usersMap[fromid.toString()].photo;
+  }
+
+  getName(fromid) {
+    if (fromid.toString().includes('-')) {
+      return this.groupsMap[fromid.toString().replace('-', '')].name;
+    }
+    return this.usersMap[fromid.toString()].first_name + ' ' + this.usersMap[fromid.toString()].last_name;
   }
 }
