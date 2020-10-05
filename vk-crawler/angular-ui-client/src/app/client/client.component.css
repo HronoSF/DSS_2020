@@ -90,3 +90,13 @@ mat-form-field {
   padding: 30px;
   margin-bottom: 20px;
 }
+.paginator-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.back, .next {
+  margin-left: 20px;
+  color: #3f51b5;
+}

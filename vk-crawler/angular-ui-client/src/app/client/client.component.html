@@ -47,14 +47,11 @@
       </div>
       <ng-container *ngTemplateOutlet="graphTemplate"></ng-container>
     </div>
-  </div>
+    <div class="paginator-container" *ngIf="showTextResponse">
+      <a><div (click)="search('next')" class="back">Назад</div></a>
+      <a><div (click)="search('prev')" class="next">Далее</div></a>
 
-  <div class="paginator-container">
-    <mat-paginator
-      [pageSize]="20"
-      [pageSizeOptions]="[20]"
-      (page)="search($event)">
-    </mat-paginator>
+    </div>
   </div>
 
     <ng-template #graphTemplate>
