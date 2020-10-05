@@ -39,7 +39,13 @@ public class ScheduledDataProcessingJob {
                 .esRDD(sc, esIndex, esQuery)
                 .values();
 
-        log.info("Extracted {} documents from ES", wallPosts.count());
+        long postCount = wallPosts.count();
+        log.info("Extracted {} documents from ES", postCount);
+
+        // skip if nothing to process:
+        if (postCount == 0) {
+            return;
+        }
 
         // call for neural nets work:
         summarizerConnector.processData(wallPosts);

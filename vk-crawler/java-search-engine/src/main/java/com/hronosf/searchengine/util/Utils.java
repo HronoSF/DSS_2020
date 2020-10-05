@@ -35,7 +35,7 @@ public class Utils {
         IdSearchResponseDTO.Builder builder = IdSearchResponseDTO.newBuilder();
 
         List<ObjectToRelation> relationMaps = extractedDocs
-                .map(data -> data.get("relationMap").toString())
+                .map(data -> data.getOrDefault("relationMap", new HashMap<String, String>()).toString())
                 .map(Utils::stringToMap)
                 .collect()
                 .stream()
