@@ -9,10 +9,12 @@ export class SearchService {
 
   constructor(private searchClient: SearchClient) {}
 
-  public searchWithText(query): Observable<TextSearchResponseDTO.AsObject> {
+  public searchWithText(query, page, size): Observable<TextSearchResponseDTO.AsObject> {
 
     const request = new TestSearchRequestDTO();
     request.setTexttosearch(query);
+    request.setPage(page);
+    request.setSize(size);
 
     return new Observable((observer: Observer<any>) => {
       this.searchClient.searchWithText(request, ((error, response: TextSearchResponseDTO) => {

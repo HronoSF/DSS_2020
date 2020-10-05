@@ -39,8 +39,8 @@ export class ClientComponent implements OnInit {
   showTextResponse = false;
   showIdResponse = false;
 
-  page: number;
-  size: number;
+  page = 1;
+  size = 20;
 
   vkOpenAuthURL = vkOpenAuthDialogURL;
 
@@ -67,16 +67,22 @@ export class ClientComponent implements OnInit {
     }
   }
 
-  search(event: PageEvent) {
+  search(event: string) {
+    if (event === 'next') {
+      this.page += 1;
+    }
+    if (event === 'prev' && this.page > 1) {
+      this.page -= 1;
+    }
     if (this.searchForm.value.searchWithId) {
       this.searchWithId();
     } else {
-      this.searchWithText();
+      this.searchWithText(this.page, this.size);
     }
   }
 
-  searchWithText() {
-    this.searchService.searchWithText(this.searchForm.value.texttosearch)
+  searchWithText(page: number, size: number) {
+    this.searchService.searchWithText(this.searchForm.value.texttosearch, page, size)
       .pipe(
         switchMap((result) => {
           console.log(result);
