@@ -31,7 +31,7 @@ public class Utils {
         return builder.build();
     }
 
-    public static IdSearchResponseDTO mapToIdSearchWallPost(String userId, JavaRDD<Map<String, Object>> extractedDocs) {
+    public static IdSearchResponseDTO mapToIdSearchWallPost(JavaRDD<Map<String, Object>> extractedDocs) {
         IdSearchResponseDTO.Builder builder = IdSearchResponseDTO.newBuilder();
 
         List<ObjectToRelation> relationMaps = extractedDocs
@@ -41,6 +41,9 @@ public class Utils {
                 .stream()
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+
+        Map<String, Object> anyDocument = extractedDocs.take(1).get(0);
+        String userId = anyDocument.get("fromId").toString();
 
         builder.addAllRelationMap(relationMaps);
         builder.setFromId(Long.parseLong(userId));

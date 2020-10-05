@@ -37,6 +37,9 @@ class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
         # get data from request:
         docs = request.textToSummarize
 
+        if not docs:
+            return summarizer_pb2.SummarizeResponseDTO()
+
         logging.info('Processing of %s text(s)', len(docs))
 
         # modify data - set summary and processing time:

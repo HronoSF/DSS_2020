@@ -75,11 +75,15 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
 
     @Override
     public void relaunchCrawlerFinishedTask() {
-        log.info("Checking for relaunch sequential crawler jobs:");
-        relaunch(crawlerSequentialTasks);
+        if (!crawlerExecuteTasks.isEmpty()) {
+            log.info("Checking for relaunch sequential crawler jobs:");
+            relaunch(crawlerSequentialTasks);
+        }
 
-        log.info("Checking for relaunch execute crawler jobs:");
-        relaunch(crawlerExecuteTasks);
+        if (!crawlerExecuteTasks.isEmpty()) {
+            log.info("Checking for relaunch execute crawler jobs:");
+            relaunch(crawlerExecuteTasks);
+        }
     }
 
     private void startCrawling(String domain, boolean asAdmin) {

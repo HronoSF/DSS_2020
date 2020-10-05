@@ -169,8 +169,10 @@ class LexRank:
 
         nominator = 0
 
+       
         for word in words_i & words_j:
-            idf = self.idf_score[word]
+            idf_value_word =  self.idf_score[word] if self.idf_score[word] else 0
+            idf = idf_value_word
             nominator += tf_i[word] * tf_j[word] * idf ** 2
 
         if math.isclose(nominator, 0):
@@ -179,11 +181,13 @@ class LexRank:
         denominator_i, denominator_j = 0, 0
 
         for word in words_i:
-            tfidf = tf_i[word] * self.idf_score[word]
+            idf_value_word =  self.idf_score[word] if self.idf_score[word] else 0
+            tfidf = tf_i[word] * idf_value_word
             denominator_i += tfidf ** 2
 
         for word in words_j:
-            tfidf = tf_j[word] * self.idf_score[word]
+            idf_value_word =  self.idf_score[word] if self.idf_score[word] else 0
+            tfidf = tf_j[word] * idf_value_word
             denominator_j += tfidf ** 2
 
         similarity = nominator / math.sqrt(denominator_i * denominator_j)
@@ -205,8 +209,11 @@ class LexRank:
         return markov_matrix
 
     def get_prediction_lex_rank(self, text, summary_size=1, threshold=None):
-        sentences = [s.text for s in razdel.sentenize(text)]
-        prediction = self.get_summary(
-            sentences, summary_size=summary_size, threshold=threshold)
-        prediction = " ".join(prediction)
-        return prediction
+        try:
+            sentences = [s.text for s in razdel.sentenize(text)]
+            prediction = self.get_summary(
+                sentences, summary_size=summary_size, threshold=threshold)
+            prediction = " ".join(prediction)
+            return prediction
+        except Exception:
+            return ''

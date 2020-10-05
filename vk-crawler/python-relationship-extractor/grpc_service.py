@@ -32,6 +32,9 @@ class RelationshipExtractorServicer(relationship_extractor_pb2_grpc.Relationship
         # get data from request:
         docs = request.textToExtract
 
+        if not docs:
+            return relationship_extractor_pb2.RelationshipExtractorResponseDTO()
+
         logging.info('Processing of %s text(s)', len(docs))
 
         result = sc.parallelize(docs) \

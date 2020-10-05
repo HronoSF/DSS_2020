@@ -44,7 +44,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         List<WallPost> searchResults = JavaEsSpark.esRDD(sc, esIndex, query)
                 .values()
                 .map(Utils::mapToFullSearchWallPost)
-                .take(request.getSize() * request.getPage() <= 0 ? 1 : request.getPage())
+                .take(request.getSize() * request.getPage() <= 0 ? 1 : request.getSize())
                 .stream()
                 .skip(request.getPage() <= 1 ? 0 : request.getSize() * (request.getPage() - 1))
                 .collect(Collectors.toList());
@@ -72,6 +72,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         log.info("Extracted {} documents from Elastic Search", extractedDocs.count());
 
         // map results:
-        return Utils.mapToIdSearchWallPost(userId, extractedDocs);
+        return Utils.mapToIdSearchWallPost(extractedDocs);
     }
 }

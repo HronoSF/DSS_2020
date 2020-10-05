@@ -179,6 +179,7 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
     }
 
     private boolean isResponseItemsPresent(VkResponseDto vkResponse) {
-        return vkResponse != null && vkResponse.getResponse().getItems() != null && !vkResponse.getResponse().getItems().isEmpty();
+        return vkResponse != null && vkResponse.getResponse() != null &&
+                vkResponse.getResponse().getItems() != null && !vkResponse.getResponse().getItems().isEmpty();
     }
 }

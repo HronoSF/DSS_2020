@@ -81,17 +81,20 @@ def extract_sentnces_with_names(text):
 
 
 def extract_relations_from_docs(doc):
-    # apply semantic analysis to sentences with named entity and get result dict:
-    obj_to_sentence = extract_sentnces_with_names(doc.text)
+    try:
+        # apply semantic analysis to sentences with named entity and get result dict:
+        obj_to_sentence = extract_sentnces_with_names(doc.text)
 
-    sentences = obj_to_sentence.values()
-    prediction_results = sentenizer.predict(sentences)
+        sentences = obj_to_sentence.values()
+        prediction_results = sentenizer.predict(sentences)
 
-    target = {}
-    for sentence, sentiment in zip(obj_to_sentence.keys(), prediction_results):
-        target[sentence] = relation_to_string_naive(sentiment)
+        target = {}
+        for sentence, sentiment in zip(obj_to_sentence.keys(), prediction_results):
+            target[sentence] = relation_to_string_naive(sentiment)
 
-    return json.dumps(target, ensure_ascii=False)
+        return json.dumps(target, ensure_ascii=False)
+    except Exception:
+         return json.dumps({}, ensure_ascii=False)
 
 
 def relation_to_string_naive(result_map):

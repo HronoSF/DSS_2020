@@ -22,8 +22,30 @@
           "bool": {
             "must": {
               "terms": {
+                "fromId": [
+                  "-%s"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "must": {
+              "terms": {
                 "signerId": [
-                  "%s"
+                  "*%s"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "must": {
+              "terms": {
+                "signerId": [
+                  "-%s"
                 ]
               }
             }

@@ -32,7 +32,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     @SneakyThrows
     public void loadTemplate() {
         letterHtml = IOUtils
-                .toString(this.getClass().getResourceAsStream("templates/letter.html"), Charset.defaultCharset());
+                .toString(this.getClass().getClassLoader().getResourceAsStream("templates/letter.html"), Charset.defaultCharset());
     }
 
     @SneakyThrows
