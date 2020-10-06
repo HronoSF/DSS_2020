@@ -1,5 +1,5 @@
 FROM node
-COPY ./angular-ui-admin/ /app/
+COPY ./angular-ui-client/ /app/
 COPY ./java-proto-handler/ /app/java-proto-handler
 WORKDIR /app
 RUN npm install & \
@@ -10,5 +10,5 @@ RUN apt update && \
   protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
   --js_out=import_style=commonjs,binary:src/app/proto-gen \
   --ts_out=service=grpc-web:src/app/proto-gen -I java-proto-handler/src/main/proto/ \
-  java-proto-handler/src/main/proto/crawler.proto
-CMD ng serve --host 0.0.0.0 --port 4201
+  java-proto-handler/src/main/proto/search.proto
+CMD ng serve --host 0.0.0.0

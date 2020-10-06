@@ -1,10 +1,28 @@
 version: "3.4"
 
+networks:
+  vk-crawler_crawler_internal:
+    external: true
+
 services:
   admin-vk:
     container_name: admin-vk
     build:
       dockerfile: angular-ui-admin/Dockerfile
       context: .
+    networks:
+        - vk-crawler_crawler_internal
+    restart: on-failure
+    ports:
+      - "4201:4201"
+
+  client-vk:
+    container_name: client-vk
+    build:
+      dockerfile: angular-ui-client/Dockerfile
+      context: .
+    networks:
+        - vk-crawler_crawler_internal
+    restart: on-failure
     ports:
       - "4200:4200"

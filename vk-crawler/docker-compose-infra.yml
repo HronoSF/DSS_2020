@@ -81,10 +81,36 @@ services:
         - crawler_internal
 
   proxy:
-        image: envoyproxy/envoy-alpine:v1.14.1
-        ports:
-        - 9901:9901
-        - 10000:10000
-        - 10001:10001
-        volumes:
-        - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    container_name: proxy
+    image: envoyproxy/envoy-alpine:v1.14.1
+    networks:
+      - crawler_internal
+    restart: on-failure
+    ports:
+      - 9901:9901
+      - 10000:10000
+      - 10001:10001
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+
+  proxy-for-vk_1:
+    container_name: proxy-for-vk_1
+    build:
+      dockerfile: proxy-for-vk/Dockerfile_proxy_1
+      context: .
+    networks:
+      - crawler_internal
+    restart: on-failure
+    ports:
+      - 8010:8010
+
+  proxy-for-vk_2:
+    container_name: proxy-for-vk_2
+    build:
+      dockerfile: proxy-for-vk/Dockerfile_proxy_2
+      context: .
+    networks:
+        - crawler_internal
+    restart: on-failure
+    ports:
+      - 8020:8020
