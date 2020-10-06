@@ -1,7 +1,7 @@
 version: '3.4'
 
 x-infra: &infra-variables
-  SPARK_ADDRESS: spark://spark:7077
+  SPARK_ADDRESS: local[*]
   ES_ADDRESS: elasticsearch
 
 networks:

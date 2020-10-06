@@ -14,7 +14,7 @@ RUN cd /app/src/main/proto \
     && python -m grpc_tools.protoc -I. --python_out=/root/python_proto/ --grpc_python_out=/root/python_proto/ summarizer.proto
 
 # stage 3: run python service
-FROM python:3.7
+FROM rappdw/docker-java-python:openjdk1.8.0_171-python3.6.6
 COPY --from=clone /root/project/python-summarizer/ /app/
 COPY --from=protobuf-build /root/python_proto/ /app/
 ARG SPARK_ADDRESS
