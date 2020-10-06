@@ -16,6 +16,9 @@
 1. open git bash (if you have Windows) or bash (if Unix)
 2. ./run.sh up --build
 
+**Tips:**
+1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7
+
 **How to use:**
 1. start up
 2. go to [admin app](http://localhost:4201)
