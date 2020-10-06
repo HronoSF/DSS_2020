@@ -1,0 +1,12 @@
+FROM node:12-alpine
+
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY proxy-for-vk/package.json /usr/src/app
+RUN npm install
+
+COPY . /usr/src/app
+
+CMD npm run proxy
