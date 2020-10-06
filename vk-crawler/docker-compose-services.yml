@@ -52,6 +52,8 @@ services:
     build:
         dockerfile: python-relationship-extractor/Dockerfile
         context: .
+    args:
+        SPARK_ADDRESS: spark://spark:7077
     ports:
       - "6067:6067"
     networks:
@@ -63,6 +65,8 @@ services:
     build:
         dockerfile: python-summarizer/Dockerfile
         context: .
+    args:
+        SPARK_ADDRESS: spark://spark:7077
     ports:
       - "6066:6066"
     networks:

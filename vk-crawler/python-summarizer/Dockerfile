@@ -17,6 +17,8 @@ RUN cd /app/src/main/proto \
 FROM python:3.7
 COPY --from=clone /root/project/python-summarizer/ /app/
 COPY --from=protobuf-build /root/python_proto/ /app/
+ARG SPARK_ADDRESS
+ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
 EXPOSE 6066
 WORKDIR /app
 RUN pip install -r requirements.txt
