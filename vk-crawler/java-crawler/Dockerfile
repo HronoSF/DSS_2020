@@ -24,6 +24,8 @@ RUN cd /app/ \
 FROM bellsoft/liberica-openjdk-alpine:8
 ARG VK_APP_KEY
 ARG VK_APP_ID
+ARG ES_ADDRESS
+ENV ES_ADDRESS="${ES_ADDRESS}"
 ENV VK_APP_KEY="${VK_APP_KEY}"
 ENV VK_APP_ID="${VK_APP_ID}"
 EXPOSE 9090

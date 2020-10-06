@@ -22,6 +22,10 @@ RUN cd /app/ \
 # stage 4: run data-processing app
 FROM bellsoft/liberica-openjdk-alpine:8
 WORKDIR app/
+ARG SPARK_ADDRESS
+ARG ES_ADDRESS
+ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
+ENV ES_ADDRESS="${ES_ADDRESS}"
 COPY --from=dataprocessing-build /root/search-engine-0.0.1.jar .
 ENTRYPOINT ["sh", "-c"]
 CMD ["java -jar -Dspring.profiles.active=docker search-engine-0.0.1.jar"]

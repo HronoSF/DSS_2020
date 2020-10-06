@@ -6,3 +6,4 @@ pyspark
 slovnet
 pymystem3
 grpcio-tools
+lexrank

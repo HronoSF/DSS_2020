@@ -1,4 +1,8 @@
-version: "2.1"
+version: '3.4'
+
+x-infra: &infra-variables
+  SPARK_ADDRESS: spark://spark:7077
+  ES_ADDRESS: elasticsearch
 
 networks:
   vk-crawler_crawler_internal:
@@ -12,6 +16,7 @@ services:
       dockerfile: java-crawler/Dockerfile
       context: .
       args:
+          <<: *infra-variables
           VK_APP_KEY: 8316dfb98316dfb98316dfb9ee836518c6883168316dfb9dc4e32d3d3de2f857ccbd94e
           VK_APP_ID: 7587711
     ports:
@@ -28,6 +33,8 @@ services:
     build:
       dockerfile: java-data-processing/Dockerfile
       context: .
+      args:
+           <<: *infra-variables
     networks:
       - vk-crawler_crawler_internal
     depends_on: 
@@ -40,6 +47,8 @@ services:
     build:
       dockerfile: java-search-engine/Dockerfile
       context: .
+      args:
+           <<: *infra-variables
     ports:
         - "9091:9091"
         - "9092:8080"
@@ -52,8 +61,8 @@ services:
     build:
         dockerfile: python-relationship-extractor/Dockerfile
         context: .
-    args:
-        SPARK_ADDRESS: spark://spark:7077
+        args:
+           <<: *infra-variables
     ports:
       - "6067:6067"
     networks:
@@ -65,9 +74,10 @@ services:
     build:
         dockerfile: python-summarizer/Dockerfile
         context: .
-    args:
-        SPARK_ADDRESS: spark://spark:7077
+        args:
+           <<: *infra-variables
     ports:
       - "6066:6066"
     networks:
        - vk-crawler_crawler_internal
+    restart: on-failure
