@@ -17,7 +17,7 @@
 2. ./run.sh up --build
 
 **Tips:**
-1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7
+1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7 ([Intallation guide](https://phoenixnap.com/kb/install-spark-on-windows-10))
 
 **How to use:**
 1. start up
