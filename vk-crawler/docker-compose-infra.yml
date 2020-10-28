@@ -48,6 +48,8 @@ services:
         - crawler_internal
     links: 
       - spark-worker
+    volumes:
+      - ./spark-env-master.sh:/opt/bitnami/spark/conf/spark-env.sh
         
   spark-worker:
     image: test
@@ -62,7 +64,7 @@ services:
     networks:
         - crawler_internal
     volumes:
-      - /spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+       - ./spark-env-master.sh:/opt/bitnami/spark/conf/spark-env.sh
   
   spark-worker-1:
     image: test
@@ -76,6 +78,8 @@ services:
       - SPARK_WORKER_CORES=6
     networks:
         - crawler_internal
+    volumes:
+      - ./spark-env-master.sh:/opt/bitnami/spark/conf/spark-env.sh
     
   # proxy:
   #   container_name: proxy
