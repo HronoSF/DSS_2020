@@ -1,31 +1,22 @@
-# stage 1: clone project repo
-FROM gradle as clone
-WORKDIR /root/project
-COPY . .
-
-# stage 2: build protobuf services from .proto files
-FROM gradle as protobuf-build
-COPY --from=clone /root/project/java-proto-handler /app/
-RUN apt update && apt install -y protobuf-compiler
-RUN cd /app/ \
+FROM gradle as search-engine-build
+COPY /java-search-engine /root/app
+WORKDIR /root/app/
+RUN cd /root/app/ \
     && gradle clean build \
-    && mv /app/build/libs/java-proto-handler-0.0.1.jar /root/
+    && mv /root/app/build/libs/search-engine-0.0.1.jar /root/
 
-# stage 3: put jar with proto to crawler libs (because artifactory is for weakling) && build jar with crawler
-FROM gradle as dataprocessing-build
-COPY --from=clone /root/project/java-search-engine /app/
-COPY --from=protobuf-build /root/java-proto-handler-0.0.1.jar /app/libs/
-RUN cd /app/ \
-    && gradle clean build \
-    && mv /app/build/libs/search-engine-0.0.1.jar /root/
-
-# stage 4: run data-processing app
-FROM bellsoft/liberica-openjdk-alpine:8
-WORKDIR app/
+# stage 2: run
+FROM openjdk:8
 ARG SPARK_ADDRESS
 ARG ES_ADDRESS
 ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
 ENV ES_ADDRESS="${ES_ADDRESS}"
-COPY --from=dataprocessing-build /root/search-engine-0.0.1.jar .
+WORKDIR /root/app/
+COPY --from=search-engine-build /root/search-engine-0.0.1-all.jar .
+RUN mkdir /root/app/libs/ \
+    && curl https://search.maven.org/remotecontent?filepath=org/elasticsearch/elasticsearch-spark-20_2.11/7.6.2/elasticsearch-spark-20_2.11-7.6.2.jar \
+    --output /root/app/libs/elasticsearch-spark-20_2.11-7.6.2.jar
+COPY --from=search-engine-build /root/search-engine-0.0.1-all.jar /root/app/libs/search-engine-0.0.1-all.jar
+EXPOSE 9091
 ENTRYPOINT ["sh", "-c"]
-CMD ["java -jar -Dspring.profiles.active=docker search-engine-0.0.1.jar"]
+CMD ["java -jar -Dspring.profiles.active=docker search-engine-0.0.1-all.jar"]

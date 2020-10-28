@@ -1,9 +1,10 @@
 nltk
 navec
 razdel
+google
 grpcio
-pyspark
 slovnet
+lexrank
 pymystem3
 grpcio-tools
-lexrank
+pyspark==2.4.7

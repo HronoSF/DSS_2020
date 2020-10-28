@@ -10,6 +10,13 @@ sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://crawler.jfrog.io/artifactory/DSS-crawler"
+        credentials {
+            username 'gleb331@mail.ru'
+            password '787896gG!'
+        }
+    }
 }
 
 dependencies {
@@ -24,7 +31,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     // Proto part:
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile group: 'com.hronosf', name: 'java-proto-handler', version: '0.0.1'
     // Jaxb:
     compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
 }

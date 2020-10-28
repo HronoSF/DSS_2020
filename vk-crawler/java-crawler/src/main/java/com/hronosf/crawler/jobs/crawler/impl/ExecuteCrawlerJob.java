@@ -31,6 +31,10 @@ public class ExecuteCrawlerJob extends AbstractCrawlerJob {
         // "autowire" beans:
         userActor = BeanUtilService.getBean(UserActor.class);
         vkApiClient = BeanUtilService.getBean(VkApiClient.class);
+
+        // log start of process with work thread name:
+        log.info("Start parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
+                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
     }
 
     @Override
@@ -42,10 +46,6 @@ public class ExecuteCrawlerJob extends AbstractCrawlerJob {
     protected VkResponseDto executeCrawlingLogic() throws ClientException, JsonProcessingException, ApiException {
         // make response via VK API wall.get method:
         iterationOffsetBorder = getIterationOffsetBorder();
-
-        // log start of process with work thread name:
-        log.info("Start parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
-                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
 
         String code = IntStream.range(offset, iterationOffsetBorder)
                 .boxed()

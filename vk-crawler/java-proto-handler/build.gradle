@@ -1,7 +1,9 @@
 plugins {
     id "com.google.protobuf" version "0.8.13"
+    id "com.jfrog.artifactory" version "4.11.0"
     id 'java'
 }
+apply plugin: 'maven-publish'
 
 group 'com.hronosf'
 version '0.0.1'
@@ -51,3 +53,28 @@ jar {
     }
 }
 
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+artifactory {
+    contextUrl = "https://crawler.jfrog.io/artifactory/"
+    publish {
+        repository {
+            repoKey = 'DSS-crawler'
+            username = "gleb331@mail.ru"
+            password = "787896gG!"
+            maven = true
+        }
+        defaults {
+            publications('mavenJava')
+            publishArtifacts = true
+        }
+    }
+}
+
+build.finalizedBy artifactoryPublish

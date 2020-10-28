@@ -64,7 +64,9 @@ public class Utils {
                 .map(entry -> ObjectToRelation.newBuilder()
                         .setObject(entry.getKey())
                         .setRelation(entry.getValue())
-                        .build()).collect(Collectors.toList());
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 }
 

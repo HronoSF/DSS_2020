@@ -34,83 +34,80 @@ services:
       - /log:/log
       
   spark:
-    image: bitnami/spark:2.4.6
+    image: test
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     container_name: spark
     environment:
       - SPARK_MODE=master
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_RPC_ENCRYPTION_ENABLED=no
-      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
     ports:
       - '8080:8080'
       - '7077:7077'
     networks:
         - crawler_internal
+    links: 
+      - spark-worker
         
-  spark-worker-1:
-    image: bitnami/spark:2.4.6
+  spark-worker:
+    image: test
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
       - SPARK_WORKER_MEMORY=6G
-      - SPARK_WORKER_CORES=4
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_RPC_ENCRYPTION_ENABLED=no
-      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
-    ports: 
-      - '8081:8081'
+      - SPARK_WORKER_CORES=6
     networks:
         - crawler_internal
-
-  spark-worker-2:
-    image: bitnami/spark:2.4.6
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark:7077
-      - SPARK_WORKER_MEMORY=6G
-      - SPARK_WORKER_CORES=4  
-      - SPARK_RPC_AUTHENTICATION_ENABLED=no
-      - SPARK_RPC_ENCRYPTION_ENABLED=no
-      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
-    ports: 
-      - '8082:8081'
-    networks:
-        - crawler_internal
-
-  proxy:
-    container_name: proxy
-    image: envoyproxy/envoy-alpine:v1.14.1
-    networks:
-      - crawler_internal
-    restart: on-failure
-    ports:
-      - 9901:9901
-      - 10000:10000
-      - 10001:10001
     volumes:
-      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
-
-  proxy-for-vk_1:
-    container_name: proxy-for-vk_1
-    build:
-      dockerfile: proxy-for-vk/Dockerfile_proxy_1
-      context: .
-    networks:
-      - crawler_internal
-    restart: on-failure
-    ports:
-      - 8010:8010
-
-  proxy-for-vk_2:
-    container_name: proxy-for-vk_2
-    build:
-      dockerfile: proxy-for-vk/Dockerfile_proxy_2
-      context: .
+      - /spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+  
+  spark-worker-1:
+    image: test
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=6G
+      - SPARK_WORKER_CORES=6
     networks:
         - crawler_internal
-    restart: on-failure
-    ports:
-      - 8020:8020
+    
+  # proxy:
+  #   container_name: proxy
+  #   image: envoyproxy/envoy-alpine:v1.14.1
+  #   networks:
+  #     - crawler_internal
+  #   restart: on-failure
+  #   ports:
+  #     - 9901:9901
+  #     - 10000:10000
+  #     - 10001:10001
+  #   volumes:
+  #     - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+
+  # proxy-for-vk_1:
+  #   container_name: proxy-for-vk_1
+  #   build:
+  #     dockerfile: proxy-for-vk/Dockerfile_proxy_1
+  #     context: .
+  #   networks:
+  #     - crawler_internal
+  #   restart: on-failure
+  #   ports:
+  #     - 8010:8010
+
+  # proxy-for-vk_2:
+  #   container_name: proxy-for-vk_2
+  #   build:
+  #     dockerfile: proxy-for-vk/Dockerfile_proxy_2
+  #     context: .
+  #   networks:
+  #       - crawler_internal
+  #   restart: on-failure
+  #   ports:
+  #     - 8020:8020

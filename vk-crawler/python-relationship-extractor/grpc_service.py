@@ -15,7 +15,8 @@ logging.getLogger('py4j.java_gateway').setLevel(logging.ERROR)
 
 # init Spark context:
 logging.info("Initializing PySpark context")
-sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
+sc = pyspark.SparkContext(master='local[*]',
+                          appName="Relationship Extractor Service")
 
 def extract_relations(doc):
     relation_map = extract_relations_from_docs(doc)
@@ -38,10 +39,10 @@ class RelationshipExtractorServicer(relationship_extractor_pb2_grpc.Relationship
         logging.info('Processing of %s text(s)', len(docs))
 
         result = sc.parallelize(docs) \
-          .map(lambda doc: extract_relations(doc)) \
-          .collect()
+            .map(lambda doc: extract_relations(doc)) \
+            .collect()
 
-        return relationship_extractor_pb2.RelationshipExtractorResponseDTO(dataToUpdate = result)
+        return relationship_extractor_pb2.RelationshipExtractorResponseDTO(dataToUpdate=result)
 
 
 # server startup:

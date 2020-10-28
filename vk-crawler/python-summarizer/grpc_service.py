@@ -1,13 +1,12 @@
 import os
 import grpc
 import time
-import razdel
 import logging
 import pyspark
 import summarizer_pb2
 import summarizer_pb2_grpc
 from concurrent import futures
-from lexrank_model import LexRank
+from summarizers import LexRank
 
 # set log level & disable pyspark logs:
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +18,16 @@ lxr = LexRank(path_to_idf_pickle='weights/idf.pickle')
 
 # init Spark context:
 logging.info("Initializing PySpark context")
-sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
+conf = pyspark.SparkConf()
+conf.set("spark.submit.deployMode", "client")
+conf.set("spark.driver.bindAddress", "0.0.0.0")
+conf.set("spark.master", 'spark://localhost:7077')
+
+sc = pyspark.SparkContext(appName="Summarization Service", conf=conf)
+
+sc.addPyFile("summarizers.py")
+sc.addPyFile("summarizer_pb2.py")
+sc.addPyFile("summarizer_pb2_grpc.py")
 
 
 # define data transfromation to proto entity method:
