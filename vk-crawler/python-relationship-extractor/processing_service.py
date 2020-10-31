@@ -13,7 +13,7 @@ from dostoevsky.models import FastTextSocialNetworkModel
 meaningful_tags = ['positive', 'negative']
 
 # init models:
-mystem = Mystem()
+mystem = Mystem(mystem_bin="/root/")
 navec = Navec.load('data/navec_news_v1_1B_250K_300d_100q.tar')
 syntax = Syntax.load('data/slovnet_syntax_news_v1.tar').navec(navec)
 sentenizer = FastTextSocialNetworkModel(tokenizer=UDBaselineTokenizer())

@@ -16,6 +16,11 @@ RUN cd /app \
 
 # stage 3: run python service
 FROM python:3.6-slim
+USER root
+ARG SPARK_ADDRESS
+ARG SPARK_CORES_MAX
+ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
+ENV SPARK_CORES_MAX="${SPARK_CORES_MAX}"
 RUN apt-get update
 RUN apt-get install -y apt-utils build-essential gcc zip
 ENV JAVA_FOLDER java-se-8u41-ri
@@ -41,6 +46,7 @@ ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
 WORKDIR /root/app
 EXPOSE 6067
 RUN pip install -r requirements.txt && \
-    python -m dostoevsky download fasttext-social-network-model
+    python -m dostoevsky download fasttext-social-network-model \
+    && pip install --target=/root/ pymystem3
 ENTRYPOINT ["sh", "-c"]
 CMD ["python grpc_service.py"]

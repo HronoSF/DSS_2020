@@ -15,8 +15,17 @@ logging.getLogger('py4j.java_gateway').setLevel(logging.ERROR)
 
 # init Spark context:
 logging.info("Initializing PySpark context")
-sc = pyspark.SparkContext(master='local[*]',
-                          appName="Relationship Extractor Service")
+conf = pyspark.SparkConf()
+conf.set("spark.driver.bindAddress", "0.0.0.0")
+conf.set("spark.master", os.getenv('SPARK_ADDRESS', 'local[*]'))
+conf.set("spark.cores.max", os.getenv('SPARK_CORES_MAX', '1'))
+
+sc = pyspark.SparkContext(appName="Relation Extractor Service", conf=conf)
+
+sc.addPyFile("processing_service.py")
+sc.addPyFile("relationship_extractor_pb2.py")
+sc.addPyFile("relationship_extractor_pb2_grpc.py")
+
 
 def extract_relations(doc):
     relation_map = extract_relations_from_docs(doc)

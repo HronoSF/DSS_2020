@@ -31,10 +31,6 @@ public class ExecuteCrawlerJob extends AbstractCrawlerJob {
         // "autowire" beans:
         userActor = BeanUtilService.getBean(UserActor.class);
         vkApiClient = BeanUtilService.getBean(VkApiClient.class);
-
-        // log start of process with work thread name:
-        log.info("Start parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
-                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
     }
 
     @Override
@@ -51,6 +47,10 @@ public class ExecuteCrawlerJob extends AbstractCrawlerJob {
                 .boxed()
                 .map(i -> String.format(GET_WALL_POST_EXECUTE_TEMPLATE, domain, i * 100))
                 .collect(Collectors.joining("\n"));
+
+        // log progress info with work thread name:
+        log.info("Parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
+                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
 
         String content = vkApiClient.execute()
                 .code(userActor, code)

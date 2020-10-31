@@ -40,12 +40,15 @@ public class SparkConfiguration {
     @Value("${app.name}")
     private String appName;
 
+    @Value("${spark.cores.for.app}")
+    private String corePerWorkerCount;
+
     @Setter(onMethod = @__(@Autowired))
     private Environment environment;
 
     // =======================> Bean definitions:
     @Bean(destroyMethod = "close")
-    public JavaSparkContext sc() throws ClassNotFoundException {
+    public JavaSparkContext sc() {
 
         SparkConf conf = new SparkConf();
         conf.set("es.nodes", esHots)
@@ -53,13 +56,12 @@ public class SparkConfiguration {
                 .set("es.index.auto.create", esIndexAutoCreate)
                 .set("es.index.read.missing.as.empty", "true")
                 .set("spark.master", sparkMaster)
-                .set("spark.submit.deployMode", "client")
-                .set("spark.driver.bindAddress", "0.0.0.0")
                 .set("spark.es.nodes.wan.only", esNodesWanOnly)
                 .set("spark.kryoserializer.buffer", sparkSerializerBufferSize)
                 .set("spark.kryo.registrator", "com.hronosf.searchengine.serializers.CustomKryoRegistrator")
                 .setAppName(appName);
 
+        // Additional setting for startup with docker:
         if (Arrays.asList(environment.getActiveProfiles()).contains("docker")) {
             String[] jars = {
                     "libs/elasticsearch-spark-20_2.11-7.6.2.jar",
@@ -69,7 +71,10 @@ public class SparkConfiguration {
             Arrays.stream(jars)
                     .forEach(jarPath -> log.info("Attaching jar with path in container: " + jarPath));
 
-            conf.setJars(jars);
+            conf.setJars(jars)
+                    .set("spark.cores.max", corePerWorkerCount)
+                    .set("spark.submit.deployMode", "cluster")
+                    .set("spark.driver.bindAddress", "0.0.0.0");
         }
 
         return JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));

@@ -89,6 +89,7 @@ public abstract class AbstractCrawlerJob implements CancelableRunnable {
                 CrawlerStateStorage.removeDomainFromCache(domain);
             }
 
+            log.info("Execution in thread {}:", Thread.currentThread().getName());
             VkResponseDto vkRestResponse = executeCrawlingLogic();
 
             // Parse response:

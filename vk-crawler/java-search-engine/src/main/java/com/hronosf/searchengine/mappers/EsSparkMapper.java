@@ -1,4 +1,4 @@
-package com.hronosf.searchengine.util;
+package com.hronosf.searchengine.mappers;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,8 @@ import org.apache.spark.api.java.JavaRDD;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Utils {
+// static mappers to use it in spark
+public class EsSparkMapper {
 
     static ObjectMapper mapper = new ObjectMapper();
 
@@ -36,7 +37,7 @@ public class Utils {
 
         List<ObjectToRelation> relationMaps = extractedDocs
                 .map(data -> data.getOrDefault("relationMap", new HashMap<String, String>()).toString())
-                .map(Utils::stringToMap)
+                .map(EsSparkMapper::stringToMap)
                 .collect()
                 .stream()
                 .flatMap(List::stream)

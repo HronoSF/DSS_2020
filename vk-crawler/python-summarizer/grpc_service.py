@@ -19,11 +19,9 @@ lxr = LexRank(path_to_idf_pickle='weights/idf.pickle')
 # init Spark context:
 logging.info("Initializing PySpark context")
 conf = pyspark.SparkConf()
-conf.set("spark.submit.deployMode", "client")
 conf.set("spark.driver.bindAddress", "0.0.0.0")
-conf.set("spark.master", 'spark://spark:7077')
-conf.set("spark.executor.instances",'1')
-conf.set("spark.executor.cores",'6')
+conf.set("spark.master", os.getenv('SPARK_ADDRESS', 'local[*]'))
+conf.set("spark.cores.max", os.getenv('SPARK_CORES_MAX', '1'))
 
 sc = pyspark.SparkContext(appName="Summarization Service", conf=conf)
 

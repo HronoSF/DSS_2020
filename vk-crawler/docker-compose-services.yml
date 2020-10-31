@@ -1,8 +1,9 @@
 version: '3.4'
 
 x-infra: &infra-variables
-  SPARK_ADDRESS: spark://spark:7077
+  SPARK_CORES_MAX: 3
   ES_ADDRESS: elasticsearch
+  SPARK_ADDRESS: spark://spark:7077
 
 networks:
   vk-crawler_crawler_internal:
@@ -23,23 +24,21 @@ services:
       - "9087:8080"
     networks:
       - vk-crawler_crawler_internal
-    # depends_on: 
-    #    - java-data-processing
     restart: on-failure
 
-  # java-data-processing:
-  #   container_name: java-data-processing
-  #   build:
-  #     dockerfile: java-data-processing/Dockerfile
-  #     context: .
-  #     args:
-  #          <<: *infra-variables
-  #   networks:
-  #     - vk-crawler_crawler_internal
-  #   depends_on: 
-  #     - python-summarization-service
-  #     - python-relationship-extractor-service
-  #   restart: on-failure
+  java-data-processing:
+    container_name: java-data-processing
+    build:
+      dockerfile: java-data-processing/Dockerfile
+      context: .
+      args:
+           <<: *infra-variables
+    networks:
+      - vk-crawler_crawler_internal
+    # depends_on: 
+    #   - python-summarization-service
+    #   - python-relationship-extractor-service
+    restart: on-failure
 
   java-search-engine:
     container_name: java-search-engine
@@ -55,18 +54,18 @@ services:
         - vk-crawler_crawler_internal
     restart: on-failure
     
-  # python-relationship-extractor-service:
-  #   container_name:  python-relationship-extractor-service
-  #   build:
-  #       dockerfile: python-relationship-extractor/Dockerfile
-  #       context: .
-  #       args:
-  #          <<: *infra-variables
-  #   ports:
-  #     - "6067:6067"
-  #   networks:
-  #     - vk-crawler_crawler_internal
-  #   restart: on-failure
+  python-relationship-extractor-service:
+    container_name:  python-relationship-extractor-service
+    build:
+        dockerfile: python-relationship-extractor/Dockerfile
+        context: .
+        args:
+           <<: *infra-variables
+    ports:
+      - "6067:6067"
+    networks:
+      - vk-crawler_crawler_internal
+    restart: on-failure
   
   python-summarization-service:
     container_name: python-summarization-service

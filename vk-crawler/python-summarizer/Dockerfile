@@ -16,6 +16,10 @@ RUN cd /app/ \
 
 # stage 3: run python service
 FROM python:3.6-slim
+ARG SPARK_ADDRESS
+ARG SPARK_CORES_MAX
+ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
+ENV SPARK_CORES_MAX="${SPARK_CORES_MAX}"
 RUN apt-get update
 RUN apt-get install -y apt-utils build-essential gcc zip
 ENV JAVA_FOLDER java-se-8u41-ri
@@ -40,7 +44,6 @@ ARG SPARK_ADDRESS
 ENV SPARK_ADDRESS="${SPARK_ADDRESS}"
 WORKDIR /root/app
 EXPOSE 6066
-RUN pip3 install -r requirements.txt \
-    && zip -r dep.zip /usr/local/lib/python3.6
+RUN pip3 install -r requirements.txt
 ENTRYPOINT ["sh", "-c"]
 CMD ["python grpc_service.py"]
