@@ -47,6 +47,6 @@ WORKDIR /root/app
 EXPOSE 6067
 RUN pip install -r requirements.txt && \
     python -m dostoevsky download fasttext-social-network-model \
-    && pip install --target=/root/ pymystem3
+    && python -m nltk.downloader punkt
 ENTRYPOINT ["sh", "-c"]
 CMD ["python grpc_service.py"]

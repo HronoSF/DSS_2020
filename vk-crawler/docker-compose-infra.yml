@@ -34,10 +34,7 @@ services:
       - /log:/log
       
   spark:
-    image: test
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    image: vk-crawler-spark-base-image
     container_name: spark
     environment:
       - SPARK_MODE=master
@@ -48,10 +45,7 @@ services:
         - crawler_internal
         
   spark-worker:
-    image: test
-    # build:  
-    #   context: .
-    #   dockerfile: Dockerfile
+    image: vk-crawler-spark-base-image
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077

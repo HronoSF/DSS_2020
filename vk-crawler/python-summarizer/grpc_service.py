@@ -51,7 +51,7 @@ class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
         logging.info('Processing of %s text(s)', len(docs))
 
         # modify data - set summary and processing time:
-        updated_docs = sc.parallelize(docs) \
+        updated_docs = [summarize_text_with_lex_rank(x) for x in docs] if len(docs) <= 100 else sc.parallelize(docs) \
             .map(lambda doc: summarize_text_with_lex_rank(doc)) \
             .collect()
 

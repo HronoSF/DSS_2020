@@ -3,7 +3,7 @@ navec
 google
 grpcio
 slovnet
-pymystem3
+pymorphy2==0.8
 dostoevsky
 grpcio-tools
 razdel==0.4.0

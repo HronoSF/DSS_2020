@@ -4,9 +4,8 @@ google
 grpcio
 slovnet
 lexrank
-pymystem3
 grpcio-tools
 razdel==0.4.0
 slovnet
-pymystem3
 dostoevsky
+pymorphy2==0.8
