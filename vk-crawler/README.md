@@ -7,7 +7,7 @@
 
 **For local startup:**
 1. open git bash (if you have Windows) or bash (if Unix)
-2. ./run.sh up --build (it takes about 20-30 minutes to build and start)
+2. ./run.sh up -d --build (it takes about 20-30 minutes to build and start)
 
 **Tips:**
 1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7 ([Intallation guide](https://phoenixnap.com/kb/install-spark-on-windows-10))

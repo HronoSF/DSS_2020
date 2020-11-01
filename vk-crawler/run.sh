@@ -17,13 +17,18 @@ if [[ "$#" -ge 1 ]]; then
 	fi
 
 	if [ "$1" == "up" ]; then
-		tput setaf 2; echo $'\nStartup stage\n'; tput sgr0;
+		tput setaf 2; echo $'\nStartup stage\n';
+
+		tput setaf 2; echo $'\nStartup infrastructure\n'; tput sgr0;
 		eval docker-compose -f docker-compose-infra.yml $@ --scale spark-worker=2 || exit 1
 
 		# time for db to init
 		eval sleep 10
 
+		tput setaf 2; echo $'\nStartup backed services\n'; tput sgr0;
 		eval docker-compose -f docker-compose-services.yml $@ || exit 1
+
+		tput setaf 2; echo $'\nStartup ui apps\n'; tput sgr0;
 		eval docker-compose -f docker-compose-ui.yml $@ || exit 1
 	fi
 	

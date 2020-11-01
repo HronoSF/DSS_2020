@@ -19,19 +19,19 @@ services:
     networks:
       - crawler_internal
 
-  elastic_search_ui:
-    image: appbaseio/dejavu
-    container_name: elastic_search_ui
-    ports:
-      - "1358:1358"
+  # elastic_search_ui:
+  #   image: appbaseio/dejavu
+  #   container_name: elastic_search_ui
+  #   ports:
+  #     - "1358:1358"
 
-  protobuf_sender_ui:
-    image: gusaul/grpcox:latest
-    container_name: protobuf_sender_ui
-    ports:
-      - "6969:6969"
-    volumes:
-      - /log:/log
+  # protobuf_sender_ui:
+  #   image: gusaul/grpcox:latest
+  #   container_name: protobuf_sender_ui
+  #   ports:
+  #     - "6969:6969"
+  #   volumes:
+  #     - /log:/log
       
   spark:
     image: vk-crawler-spark-base-image
