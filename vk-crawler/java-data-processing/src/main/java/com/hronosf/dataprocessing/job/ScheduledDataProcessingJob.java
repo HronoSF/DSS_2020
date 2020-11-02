@@ -39,7 +39,7 @@ public class ScheduledDataProcessingJob {
                 JavaEsSpark
                         .esRDD(sc, esIndex, esQuery)
                         .values()
-                        .take(1000)
+                        .take(2000)
         );
 
         long postCount = wallPosts.count();
