@@ -20,7 +20,7 @@ Go to [Spark-Master UI](http://localhost:8080) and check that all services conne
 1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7 ([Intallation guide](https://phoenixnap.com/kb/install-spark-on-windows-10))
 2. Configure Spark standalone cluster setting via:
     * docker-compose-infra.yml (how much resources allocated for worker)
-    * run.sh ( how much workers to up)
+    * run.sh (how much workers to up)
     * docker-compose-services.yml (how much cores should each spark-service use from each worker, spark-master url)
 
 **How to use:**
