@@ -7,10 +7,21 @@
 
 **For local startup:**
 1. open git bash (if you have Windows) or bash (if Unix)
-2. ./run.sh up -d --build (it takes about 20-30 minutes to build and start)
+2. ./run.sh build (it takes about 15+ minutes to build depending on the your hardware)
+3. ./run.sh up -d
+
+You should see: <br>
+![alt text](./readme-data/startup.jpg)<br><br>
+Go to [Spark-Master UI](http://localhost:8080) and check all services connected to culuster:<br>
+![alt text](./readme-data/spark.jpg)
+
 
 **Tips:**
 1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7 ([Intallation guide](https://phoenixnap.com/kb/install-spark-on-windows-10))
+2. Configure Spark standalone cluster setting via:
+    * docker-compose-infra.yml (how much resources allocated for worker)
+    * run.sh ( how much workers to up)
+    * docker-compose-services.yml (how much cores should each spark-service use from each worker)
 
 **How to use:**
 1. start up
