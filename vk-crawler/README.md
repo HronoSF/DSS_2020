@@ -11,9 +11,9 @@
 3. ./run.sh up -d
 
 You should see: <br>
-![alt text](./readme-data/startup.jpg)<br><br>
+![alt text](./readme-data/startup.png)<br><br>
 Go to [Spark-Master UI](http://localhost:8080) and check all services connected to culuster:<br>
-![alt text](./readme-data/spark.jpg)
+![alt text](./readme-data/spark.png)
 
 
 **Tips:**
