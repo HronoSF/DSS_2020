@@ -12,7 +12,7 @@
 
 You should see: <br>
 ![alt text](./readme-data/startup.png)<br><br>
-Go to [Spark-Master UI](http://localhost:8080) and check all services connected to culuster:<br>
+Go to [Spark-Master UI](http://localhost:8080) and check that all services connected to cluster:<br>
 ![alt text](./readme-data/spark.png)
 
 
@@ -21,7 +21,7 @@ Go to [Spark-Master UI](http://localhost:8080) and check all services connected 
 2. Configure Spark standalone cluster setting via:
     * docker-compose-infra.yml (how much resources allocated for worker)
     * run.sh ( how much workers to up)
-    * docker-compose-services.yml (how much cores should each spark-service use from each worker)
+    * docker-compose-services.yml (how much cores should each spark-service use from each worker, spark-master url)
 
 **How to use:**
 1. start up
