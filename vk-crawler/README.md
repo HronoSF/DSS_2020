@@ -7,12 +7,12 @@
 
 **For local startup:**
 1. open git bash (if you have Windows) or bash (if Unix)
-2. ./run.sh build (it takes about 15+ minutes to build depending on the your hardware)
+2. ./run.sh build (it takes about 20+ minutes to build depending on the your hardware)
 3. ./run.sh up -d
 
 After "./run sh up -d" command you should see: <br>
 ![alt text](./util/readme-data/startup.png)<br><br>
-Run docker ps, make sure all containers healthy:
+Run **"docker ps"** - make sure that all containers are healthy:
 ![alt text](./util/readme-data/docker.png)<br><br>
 Go to [Spark-Master UI](http://localhost:8080) and check that all services connected to cluster:<br>
 ![alt text](./util/readme-data/spark.png)
