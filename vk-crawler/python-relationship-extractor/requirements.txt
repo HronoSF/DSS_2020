@@ -1,9 +1,10 @@
 nltk
 navec
-razdel==0.4.0
+google
 grpcio
-pyspark
 slovnet
-pymystem3
+pymorphy2==0.8
 dostoevsky
 grpcio-tools
+razdel==0.4.0
+pyspark==2.4.7

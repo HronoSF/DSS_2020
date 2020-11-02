@@ -80,7 +80,7 @@ public class RelationshipExtractorServiceConnectorImpl extends AbstractDataProce
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        log.error("Something went wrong while future waiting:\n {}", throwable.getMessage());
+                        log.error("Something went wrong while relationship extraction future waiting:\n {}", throwable.getMessage());
                     }
 
                 }, executorService);

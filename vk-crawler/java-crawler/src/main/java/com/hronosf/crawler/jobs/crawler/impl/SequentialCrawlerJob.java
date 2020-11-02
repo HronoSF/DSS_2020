@@ -33,11 +33,12 @@ public class SequentialCrawlerJob extends AbstractCrawlerJob {
 
     @Override
     protected VkResponseDto executeCrawlingLogic() throws ClientException, JsonProcessingException {
-        // log start of process with work thread name:
-        log.info("Start parsing https://vk.com/{} with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
+        // log progress info with work thread name:
+        log.info("Parsing https://vk.com/{} with offset {}, work-thread {}", domain, offset, Thread.currentThread().getName());
 
         // make response via VK API wall.get method:
         String content = query.offset(offset).executeAsString();
+
         return objectMapper.readValue(content, VkResponseDto.class);
     }
 }

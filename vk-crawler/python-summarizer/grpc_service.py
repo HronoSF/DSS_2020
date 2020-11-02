@@ -1,13 +1,12 @@
 import os
 import grpc
 import time
-import razdel
 import logging
 import pyspark
 import summarizer_pb2
 import summarizer_pb2_grpc
 from concurrent import futures
-from lexrank_model import LexRank
+from summarizers import LexRank
 
 # set log level & disable pyspark logs:
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +18,16 @@ lxr = LexRank(path_to_idf_pickle='weights/idf.pickle')
 
 # init Spark context:
 logging.info("Initializing PySpark context")
-sc = pyspark.SparkContext(os.getenv('SPARK_ADDRESS', 'local[*]'))
+conf = pyspark.SparkConf()
+conf.set("spark.driver.bindAddress", "0.0.0.0")
+conf.set("spark.master", os.getenv('SPARK_ADDRESS', 'local[*]'))
+conf.set("spark.cores.max", os.getenv('SPARK_CORES_MAX', '1'))
+
+sc = pyspark.SparkContext(appName="Summarization Service", conf=conf)
+
+sc.addPyFile("summarizers.py")
+sc.addPyFile("summarizer_pb2.py")
+sc.addPyFile("summarizer_pb2_grpc.py")
 
 
 # define data transfromation to proto entity method:
@@ -43,7 +51,7 @@ class SummarizerServicer(summarizer_pb2_grpc.SummarizerServicer):
         logging.info('Processing of %s text(s)', len(docs))
 
         # modify data - set summary and processing time:
-        updated_docs = sc.parallelize(docs) \
+        updated_docs = [summarize_text_with_lex_rank(x) for x in docs] if len(docs) <= 100 else sc.parallelize(docs) \
             .map(lambda doc: summarize_text_with_lex_rank(doc)) \
             .collect()
 

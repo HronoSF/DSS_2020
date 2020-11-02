@@ -1,10 +1,4 @@
 {
-  "_source": [
-    "id",
-    "text",
-    "from_id",
-    "signed_id"
-  ],
   "query": {
     "bool": {
       "should": [
@@ -13,6 +7,24 @@
             "must_not": {
               "exists": {
                 "field": "processedIn"
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "must_not": {
+              "exists": {
+                "field": "summary"
+              }
+            }
+          }
+        },
+        {
+          "bool": {
+            "must_not": {
+              "exists": {
+                "field": "relationMap"
               }
             }
           }

@@ -6,18 +6,24 @@
 [Youtube](https://www.youtube.com/watch?v=MXfpYYRk6eI)
 
 **For local startup:**
-1. docker-compose -f docker-compose-infra.yml up -d
-2. docker-compose -f docker-compose-ui.yml up -d --build
-3. docker-compose -f docker-compose-services.yml up -d --build
-
-**Or use bash script:**
-<br>
-
 1. open git bash (if you have Windows) or bash (if Unix)
-2. ./run.sh up --build
+2. ./run.sh build (it takes about 20+ minutes to build depending on the your hardware)
+3. ./run.sh up -d
+
+After "./run sh up -d" command you should see: <br>
+![alt text](./util/readme-data/startup.png)<br><br>
+Run **"docker ps"** - make sure that all containers are healthy:
+![alt text](./util/readme-data/docker.png)<br><br>
+Go to [Spark-Master UI](http://localhost:8080) and check that all services connected to cluster:<br>
+![alt text](./util/readme-data/spark.png)
+
 
 **Tips:**
 1. For better perfomance use local Spark-3.0.1 && Hadoop-2.7 ([Intallation guide](https://phoenixnap.com/kb/install-spark-on-windows-10))
+2. Configure Spark standalone cluster setting via:
+    * docker-compose-infra.yml (how much resources allocated for worker)
+    * run.sh (how much workers to up)
+    * docker-compose-services.yml (how much cores should each spark-service use from each worker, spark-master url)
 
 **How to use:**
 1. start up
@@ -30,4 +36,4 @@
 8. enjoy it :)
 
 <br>**Project infrastructure:**<br><br>
-![alt text](./readme-data/infra.jpg)
+![alt text](./util/readme-data/infra.jpg)

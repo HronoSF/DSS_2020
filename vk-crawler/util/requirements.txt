@@ -1,0 +1,11 @@
+nltk
+navec
+google
+grpcio
+slovnet
+lexrank
+grpcio-tools
+razdel==0.4.0
+slovnet
+dostoevsky
+pymorphy2==0.8

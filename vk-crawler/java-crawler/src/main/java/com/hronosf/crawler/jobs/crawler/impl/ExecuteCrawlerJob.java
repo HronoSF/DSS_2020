@@ -43,14 +43,14 @@ public class ExecuteCrawlerJob extends AbstractCrawlerJob {
         // make response via VK API wall.get method:
         iterationOffsetBorder = getIterationOffsetBorder();
 
-        // log start of process with work thread name:
-        log.info("Start parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
-                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
-
         String code = IntStream.range(offset, iterationOffsetBorder)
                 .boxed()
                 .map(i -> String.format(GET_WALL_POST_EXECUTE_TEMPLATE, domain, i * 100))
                 .collect(Collectors.joining("\n"));
+
+        // log progress info with work thread name:
+        log.info("Parsing https://vk.com/{} offsets range {}-{}, work-thread {}"
+                , domain, offset, iterationOffsetBorder, Thread.currentThread().getName());
 
         String content = vkApiClient.execute()
                 .code(userActor, code)

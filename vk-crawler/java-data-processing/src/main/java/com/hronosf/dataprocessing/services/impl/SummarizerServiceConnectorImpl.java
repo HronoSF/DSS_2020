@@ -78,7 +78,7 @@ public class SummarizerServiceConnectorImpl extends AbstractDataProcessingServic
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        log.error("Something went wrong while future waiting:\n {}", throwable.getMessage());
+                        log.error("Something went wrong while summarization future waiting:\n {}", throwable.getMessage());
                     }
 
                 }, executorService);

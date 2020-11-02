@@ -2,7 +2,7 @@ package com.hronosf.searchengine.services.impl;
 
 import com.hronosf.search.*;
 import com.hronosf.searchengine.services.ElasticSearchService;
-import com.hronosf.searchengine.util.Utils;
+import com.hronosf.searchengine.mappers.EsSparkMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +12,8 @@ import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         // query Es with Spark && map results:
         List<WallPost> searchResults = JavaEsSpark.esRDD(sc, esIndex, query)
                 .values()
-                .map(Utils::mapToFullSearchWallPost)
+                .map(EsSparkMapper::mapToFullSearchWallPost)
                 .take(request.getSize() * request.getPage() <= 0 ? 1 : request.getSize())
                 .stream()
                 .skip(request.getPage() <= 1 ? 0 : request.getSize() * (request.getPage() - 1))
@@ -72,6 +73,6 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         log.info("Extracted {} documents from Elastic Search", extractedDocs.count());
 
         // map results:
-        return Utils.mapToIdSearchWallPost(extractedDocs);
+        return EsSparkMapper.mapToIdSearchWallPost(extractedDocs);
     }
 }
