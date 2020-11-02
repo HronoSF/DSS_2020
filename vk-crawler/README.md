@@ -11,9 +11,9 @@
 3. ./run.sh up -d
 
 You should see: <br>
-![alt text](./readme-data/startup.png)<br><br>
+![alt text](./util/readme-data/startup.png)<br><br>
 Go to [Spark-Master UI](http://localhost:8080) and check that all services connected to cluster:<br>
-![alt text](./readme-data/spark.png)
+![alt text](./util/readme-data/spark.png)
 
 
 **Tips:**
@@ -34,4 +34,4 @@ Go to [Spark-Master UI](http://localhost:8080) and check that all services conne
 8. enjoy it :)
 
 <br>**Project infrastructure:**<br><br>
-![alt text](./readme-data/infra.jpg)
+![alt text](./util/readme-data/infra.jpg)

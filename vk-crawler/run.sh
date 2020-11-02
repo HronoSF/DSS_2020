@@ -3,7 +3,7 @@
 if [[ "$#" -ge 1 ]]; then
 	if [[ "$1" == "build" || "$2" == "--build" ]]; then
 		tput setaf 1; echo $'\nBuilding Spark base image\n'; tput sgr0;
-		eval docker build -t vk-crawler-spark-base-image . || exit 1
+		eval docker build -t vk-crawler-spark-base-image /util || exit 1
 
 		tput setaf 1; echo $'\nBuilding and publishing to artifactory jar with generated classes from proto files\n'; tput sgr0;
 		eval docker build -t proto-handler java-proto-handler || exit 1
@@ -14,11 +14,11 @@ if [[ "$#" -ge 1 ]]; then
 		
 		tput setaf 1; echo $'\nBuilding frontend containers stage\n'; tput sgr0;
 		eval docker-compose -f docker-compose-ui.yml build || exit 1
+
+		tput setaf 2; echo $'\nCrawler images built successfully\n'; tput sgr0;
 	fi
 
 	if [ "$1" == "up" ]; then
-		tput setaf 2; echo $'\nStartup stage\n';
-
 		tput setaf 2; echo $'\nStartup infrastructure\n'; tput sgr0;
 		eval docker-compose -f docker-compose-infra.yml $@ --scale spark-worker=2 || exit 1
 
@@ -30,6 +30,8 @@ if [[ "$#" -ge 1 ]]; then
 
 		tput setaf 2; echo $'\nStartup ui apps\n'; tput sgr0;
 		eval docker-compose -f docker-compose-ui.yml $@ || exit 1
+
+		tput setaf 2; echo $'\nCrawler started successfully\n'; tput sgr0;
 	fi
 	
 	if [ "$1" == "down" ]; then
@@ -37,6 +39,8 @@ if [[ "$#" -ge 1 ]]; then
 		eval docker-compose -f docker-compose-services.yml $@ || exit 1
 		eval docker-compose -f docker-compose-ui.yml $@ || exit 1
 		eval docker-compose -f docker-compose-infra.yml $@ || exit 1
+
+		tput setaf 2; echo $'\nCrawler stopped successfully\n'; tput sgr0;
 	fi
 
 else
