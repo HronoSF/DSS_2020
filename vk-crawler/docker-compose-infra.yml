@@ -34,7 +34,10 @@ services:
   #     - /log:/log
       
   spark:
-    image: vk-crawler-spark-base-image
+    image: hronosf/vk-crawler-spark-base-image
+    build: 
+      dockerfile: ./Dockerfile
+      context: ./util/
     container_name: spark
     environment:
       - SPARK_MODE=master
@@ -45,7 +48,10 @@ services:
         - crawler_internal
         
   spark-worker:
-    image: vk-crawler-spark-base-image
+    image: hronosf/vk-crawler-spark-base-image
+    build: 
+      dockerfile: ./Dockerfile
+      context: ./util/
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -71,9 +77,10 @@ services:
 
   proxy-for-vk_1:
     container_name: proxy-for-vk_1
+    image: hronosf/vk-crawler-proxy-for-vk-1
     build:
-      dockerfile: util/proxy-for-vk/Dockerfile_proxy_1
-      context: .
+      dockerfile: proxy-for-vk/Dockerfile_proxy_1
+      context: ./util/
     networks:
       - crawler_internal
     restart: on-failure
@@ -82,11 +89,12 @@ services:
 
   proxy-for-vk_2:
     container_name: proxy-for-vk_2
+    image: hronosf/vk-crawler-proxy-for-vk-2
     build:
-      dockerfile: util/proxy-for-vk/Dockerfile_proxy_2
-      context: .
+      dockerfile: proxy-for-vk/Dockerfile_proxy_2
+      context: ./util/
     networks:
         - crawler_internal
     restart: on-failure
     ports:
-      - 8020:8020
+      - 8020:8020 

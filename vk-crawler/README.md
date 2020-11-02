@@ -7,7 +7,8 @@
 
 **For local startup:**
 1. open git bash (if you have Windows) or bash (if Unix)
-2. ./run.sh build (it takes about 20+ minutes to build depending on the your hardware)
+2. ./run.sh build (it takes about 20+ minutes to build depending on the your hardware)<br>
+    or ./run.sh pull (pull latest images from my [docker hub](https://hub.docker.com/u/hronosf)) 
 3. ./run.sh up -d
 
 After "./run sh up -d" command you should see: <br>

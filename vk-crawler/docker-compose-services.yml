@@ -12,6 +12,7 @@ networks:
 services:
   java-crawler:
     container_name: java-crawler
+    image: hronosf/vk-crawler-java-crawler
     build:
       dockerfile: java-crawler/Dockerfile
       context: .
@@ -28,6 +29,7 @@ services:
 
   java-data-processing:
     container_name: java-data-processing
+    image: hronosf/vk-crawler-java-data-processing
     build:
       dockerfile: java-data-processing/Dockerfile
       context: .
@@ -42,6 +44,7 @@ services:
 
   java-search-engine:
     container_name: java-search-engine
+    image: hronosf/vk-crawler-java-search-engine
     build:
       dockerfile: java-search-engine/Dockerfile
       context: .
@@ -56,6 +59,7 @@ services:
     
   python-relationship-extractor-service:
     container_name:  python-relationship-extractor-service
+    image: hronosf/vk-crawler-python-relationship-extractor-service
     build:
         dockerfile: python-relationship-extractor/Dockerfile
         context: .
@@ -69,6 +73,7 @@ services:
   
   python-summarization-service:
     container_name: python-summarization-service
+    image: hronosf/vk-crawler-python-summarization-service
     build:
         dockerfile: python-summarizer/Dockerfile
         context: .

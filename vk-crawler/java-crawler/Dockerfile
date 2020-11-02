@@ -6,7 +6,7 @@ RUN cd /app/ \
     && mv /app/build/libs/crawler-0.0.1.jar /root/
 
 # stage 2: run
-FROM bellsoft/liberica-openjdk-alpine:8
+FROM openjdk:8
 ARG VK_APP_KEY
 ARG VK_APP_ID
 ARG ES_ADDRESS
