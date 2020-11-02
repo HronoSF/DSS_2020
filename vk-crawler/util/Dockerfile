@@ -1,5 +1,5 @@
 FROM bitnami/spark:2.4.6
-COPY util/requirements.txt requirements.txt
+COPY requirements.txt requirements.txt
 USER root
 RUN apt update && apt install -y build-essential && apt install -y cmake
 RUN pip install -r requirements.txt
