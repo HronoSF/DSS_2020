@@ -3,7 +3,7 @@
 if [[ "$#" -ge 1 ]]; then
 	if [[ "$1" == "build" || "$2" == "--build" ]]; then
 		tput setaf 1; echo $'\nBuilding Spark base image\n'; tput sgr0;
-		eval docker build -t vk-crawler-spark-base-image /util || exit 1
+		eval docker build -t vk-crawler-spark-base-image ./util || exit 1
 
 		tput setaf 1; echo $'\nBuilding and publishing to artifactory jar with generated classes from proto files\n'; tput sgr0;
 		eval docker build -t proto-handler java-proto-handler || exit 1
