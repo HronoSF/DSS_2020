@@ -35,9 +35,12 @@ public class ScheduledDataProcessingJob {
     @Scheduled(cron = "${cron.expression}")
     public void processEsData() {
         // extract data from Es with spark:
-        JavaRDD<Map<String, Object>> wallPosts = JavaEsSpark
-                .esRDD(sc, esIndex, esQuery)
-                .values();
+        JavaRDD<Map<String, Object>> wallPosts = sc.parallelize(
+                JavaEsSpark
+                        .esRDD(sc, esIndex, esQuery)
+                        .values()
+                        .take(1000)
+        );
 
         long postCount = wallPosts.count();
         log.info("Extracted {} documents from ES", postCount);
