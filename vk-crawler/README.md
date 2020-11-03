@@ -9,7 +9,7 @@
 1. open git bash (if you have Windows) or bash (if Unix)
 2. ./run.sh build (build all images - it takes about 20+ minutes to build depending on the your hardware)<br>
     or <br>
-    ./run.sh pull (pull latest images from my [docker hub](https://hub.docker.com/u/hronosf)) 
+    ./run.sh pull (pull latest images from my [docker hub](https://hub.docker.com/u/hronosf) - it takes about 5-10 minutes to download depending on your network conection) 
 3. ./run.sh up -d
 
 After "./run sh up -d" command you should see: <br>
