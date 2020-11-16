@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval helm repo add elastic https://helm.elastic.co
+
 tput setaf 1
 echo $'\nCreating cluster\n'
 tput sgr0
