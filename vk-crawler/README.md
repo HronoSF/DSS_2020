@@ -18,8 +18,9 @@ Requirements:<br>
 * **Itioctl** ( choco install istioctl --version=1.7.4 )<br>
 
 To deploy ( it takes about 20-30 minutes ):
-1. cd k8s-helm
-2. sh deploy.sh
+1. open git bash (if you have Windows) or bash (if Unix)
+2. cd k8s-helm
+3. sh deploy.sh
 
 <br>
 
