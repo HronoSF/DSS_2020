@@ -8,7 +8,7 @@
 
 **For deploy in k8s:**<br>
 
-❗  **Important:** deploy will be rewritten after istio issues fixes: https://github.com/istio/istio/issues/27900  <br>
+❗  **Important:** deploy will be rewritten after istio issue fix: https://github.com/istio/istio/issues/27900  <br>
 
 Requirements:<br>
 * **Docker** ( if locally )<br> 
