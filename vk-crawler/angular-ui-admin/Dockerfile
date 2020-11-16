@@ -11,4 +11,4 @@ RUN apt update && \
   --js_out=import_style=commonjs,binary:src/app/proto-gen \
   --ts_out=service=grpc-web:src/app/proto-gen -I java-proto-handler/src/main/proto/ \
   java-proto-handler/src/main/proto/crawler.proto
-CMD ng serve --host 0.0.0.0 --port 4201
+CMD ng serve --base-href /admin/ --deploy-url /admin/

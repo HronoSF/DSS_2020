@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "ui-skeleton.fullname" . }}-gateway
+  labels:
+    app.kubernetes.io/name: {{ include "ui-skeleton.fullname" . }}
+    helm.sh/chart: {{ include "ui-skeleton.fullname" . }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: {{ .Values.service.port }}
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "ui-skeleton.fullname" . }}
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - {{ include "ui-skeleton.fullname" . }}-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /client
+      route:
+        - destination:
+            host: {{ .Values.istio.host }}
+            port:
+              number: {{ .Values.service.port }}

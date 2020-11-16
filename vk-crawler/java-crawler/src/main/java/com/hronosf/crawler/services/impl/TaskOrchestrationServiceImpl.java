@@ -34,13 +34,15 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
 
     @Override
     public Map<String, String> startSequentialCrawlingJob(List<String> wallsToParse) {
-        Map<String, String> crawlingJobsStatuses = stopCrawlerJobs(wallsToParse, crawlerSequentialTasks);
+        Map<String, String> crawlingJobsStatuses = stopCrawlerJobsIfNotInParseList(wallsToParse, crawlerSequentialTasks);
 
         // start crawling:
-        wallsToParse.forEach(wall -> {
-            crawlingJobsStatuses.put(wall, "Crawling job started at " + ZonedDateTime.now());
-            startCrawling(wall, true);
-        });
+        wallsToParse.stream()
+                .filter(wall -> crawlingJobsStatuses.get(wall) == null)
+                .forEach(wall -> {
+                    crawlingJobsStatuses.put(wall, "Crawling job started at " + ZonedDateTime.now());
+                    startCrawling(wall, true);
+                });
 
         return crawlingJobsStatuses;
     }
@@ -49,7 +51,7 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
     public Map<String, String> startExecutorCrawlingJob(StartParsingAsUserRequestDTO request) {
         ProtocolStringList wallsToParse = request.getToParseList();
 
-        Map<String, String> crawlingJobsStatuses = stopCrawlerJobs(wallsToParse, crawlerExecuteTasks);
+        Map<String, String> crawlingJobsStatuses = stopCrawlerJobsIfNotInParseList(wallsToParse, crawlerExecuteTasks);
 
         try {
             // destroy if we have user actor:
@@ -65,10 +67,12 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
         context.getBeanFactory().registerSingleton("UserActor", actor);
 
         // start crawling:
-        wallsToParse.forEach(wall -> {
-            crawlingJobsStatuses.put(wall, "Crawling job started at " + ZonedDateTime.now());
-            startCrawling(wall, false);
-        });
+        wallsToParse.stream()
+                .filter(wall -> crawlingJobsStatuses.get(wall) == null)
+                .forEach(wall -> {
+                    crawlingJobsStatuses.put(wall, "Crawling job started at " + ZonedDateTime.now());
+                    startCrawling(wall, false);
+                });
 
         return crawlingJobsStatuses;
     }
@@ -77,18 +81,18 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
     public void relaunchCrawlerFinishedTask() {
         if (!crawlerExecuteTasks.isEmpty()) {
             log.info("Checking for relaunch sequential crawler jobs:");
-            relaunch(crawlerSequentialTasks);
+            relaunch(crawlerSequentialTasks, false);
         }
 
         if (!crawlerExecuteTasks.isEmpty()) {
             log.info("Checking for relaunch execute crawler jobs:");
-            relaunch(crawlerExecuteTasks);
+            relaunch(crawlerExecuteTasks, true);
         }
     }
 
-    private void startCrawling(String domain, boolean asAdmin) {
+    private void startCrawling(String domain, boolean isSequential) {
         // create crawling cancelable runnable job:
-        AbstractCrawlerJob cancelableRunnable = asAdmin ?
+        AbstractCrawlerJob cancelableRunnable = isSequential ?
                 new SequentialCrawlerJob(domain, Integer.parseInt(requestTimeout))
                 : new ExecuteCrawlerJob(domain, Integer.parseInt(requestTimeout));
 
@@ -96,14 +100,14 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
         Future<?> future = executorService.submit(cancelableRunnable);
 
         // save info about started job:
-        if (asAdmin) {
+        if (isSequential) {
             crawlerSequentialTasks.put(domain, new CrawlerTaskInfo(future, cancelableRunnable));
         } else {
             crawlerExecuteTasks.put(domain, new CrawlerTaskInfo(future, cancelableRunnable));
         }
     }
 
-    private Map<String, String> stopCrawlerJobs(List<String> wallsToParse, Map<String, CrawlerTaskInfo> jobs) {
+    private Map<String, String> stopCrawlerJobsIfNotInParseList(List<String> wallsToParse, Map<String, CrawlerTaskInfo> jobs) {
         Map<String, String> crawlingJobsStatuses = new HashMap<>();
 
         // stop crawling if it's running && check is any of passed domains already parsing, if true - not interrupt them:
@@ -117,7 +121,6 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
 
             } else if (!taskInfo.getFuture().isDone() && !taskInfo.getFuture().isCancelled()) {
                 log.info("Crawling https://vk.com/{} already running, ignore it", domain);
-                wallsToParse.remove(domain);
 
                 crawlingJobsStatuses.put(domain, "Crawling job already running" + ZonedDateTime.now());
             }
@@ -126,12 +129,12 @@ public class TaskOrchestrationServiceImpl implements TaskOrchestrationService {
         return crawlingJobsStatuses;
     }
 
-    private void relaunch(Map<String, CrawlerTaskInfo> jobs) {
+    private void relaunch(Map<String, CrawlerTaskInfo> jobs, boolean isSequential) {
         jobs.forEach((domain, taskInfo) -> {
 
             if (taskInfo.getFuture().isDone() || taskInfo.getFuture().isCancelled()) {
                 log.info("Re-launch crawling https://vk.com/{}", domain);
-                startCrawling(domain, false);
+                startCrawling(domain, isSequential);
             }
 
         });

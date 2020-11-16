@@ -1,0 +1,104 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  addonComponents:
+    grafana:
+      enabled: true
+    kiali:
+      enabled: true
+    prometheus:
+      enabled: true
+  components:
+    base:
+      enabled: true
+    cni:
+      enabled: true
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          hpaSpec:
+            maxReplicas: 1
+          service:
+            type: NodePort
+          overlays:
+            - apiVersion: v1
+              kind: Service
+              name: istio-ingressgateway
+              patches:
+                - path: spec.ports
+                  value:
+                    # ui:
+                    - name: http3
+                      port: 4200
+                      targetPort: 4200
+                      nodePort: 30002
+                    # vk-auth-proxy
+                    - name: http4
+                      port: 8010
+                      targetPort: 8010
+                      nodePort: 30003
+                    # vk-api-proxy:
+                    - name: http5
+                      port: 8020
+                      targetPort: 8020
+                      nodePort: 30004
+                    # spark-master:
+                    - name: http6
+                      port: 8080
+                      targetPort: 8080
+                      nodePort: 30009
+                    # java-crawler:
+                    - name: grpc2
+                      port: 9090
+                      targetPort: 9090
+                      nodePort: 30005
+                    # java-search-engine:
+                    - name: grpc3
+                      port: 9091
+                      targetPort: 9091
+                      nodePort: 30006
+                    # python-summarization-service:
+                    - name: grpc4
+                      port: 6066
+                      targetPort: 6066
+                      nodePort: 30007
+                    # python-relationship-extraction-service:
+                    - name: grpc5
+                      port: 6067
+                      targetPort: 6067
+                      nodePort: 30008
+            - apiVersion: policy/v1beta1
+              kind: PodDisruptionBudget
+              name: istio-ingressgateway
+              patches:
+                - path: spec.minAvailable
+                  value: 0
+    pilot:
+      enabled: true
+      k8s:
+        hpaSpec:
+          maxReplicas: 1
+        overlays:
+          - apiVersion: policy/v1beta1
+            kind: PodDisruptionBudget
+            name: istiod
+            patches:
+              - path: spec.minAvailable
+                value: 0
+  meshConfig:
+    accessLogFile: "/dev/stdout"
+    accessLogEncoding: "JSON"
+  values:
+    global:
+      controlPlaneSecurityEnabled: true
+    cni:
+      excludeNamespaces:
+        - istio-system
+        - kube-system
+    gateways:
+      istio-ingressgateway:
+        sds:
+          enabled: true
+    sidecarInjectorWebhook:
+      rewriteAppHTTPProbe: true

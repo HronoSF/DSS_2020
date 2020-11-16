@@ -7,7 +7,7 @@ networks:
 services:
   admin-vk:
     container_name: admin-vk
-    image: hronosf/vk-crawler-angular-admin-ui
+    image: hronosf/vk-crawler-angular-admin-ui:0.0.2  
     build:
       dockerfile: angular-ui-admin/Dockerfile
       context: .
@@ -15,11 +15,11 @@ services:
         - vk-crawler_crawler_internal
     restart: on-failure
     ports:
-      - "4201:4201"
+      - "4201:4200"
 
   client-vk:
     container_name: client-vk
-    image: hronosf/vk-crawler-angular-client-ui
+    image: hronosf/vk-crawler-angular-client-ui:0.0.1
     build:
       dockerfile: angular-ui-client/Dockerfile
       context: .

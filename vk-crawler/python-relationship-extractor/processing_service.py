@@ -2,7 +2,6 @@ import re
 import nltk
 import json
 import logging
-import pymorphy2
 from navec import Navec
 from slovnet import Syntax
 from razdel import sentenize, tokenize
@@ -20,7 +19,6 @@ class SimpleExtractor:
     def __init__(self, path_to_navec_data, path_to_syntax_data):
         self.navec = Navec.load(path_to_navec_data)
         self.syntax = Syntax.load(path_to_syntax_data).navec(self.navec)
-        self.morph = pymorphy2.MorphAnalyzer()
 
     def is_values_lower(self, source, target):
         for v in source:
@@ -56,8 +54,7 @@ class SimpleExtractor:
         for dep in deps:
             obj = words[dep[- 2]]
             if 'obj' in dep and obj[0].isupper():
-                obj_to_connections[self.morph.parse(
-                    obj)[0].normal_form] = dep[:len(dep) - 2]
+                obj_to_connections[obj] = dep[:len(dep) - 2]
 
         # cut init sentence to feed to semantic neural net:
         for key, value in obj_to_connections.items():

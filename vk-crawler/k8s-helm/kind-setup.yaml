@@ -1,0 +1,51 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      # ui:
+      - containerPort: 30002
+        hostPort: 4200
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # vk-auth-proxy:
+      - containerPort: 30003
+        hostPort: 8010
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # vk-api-proxy:
+      - containerPort: 30004
+        hostPort: 8020
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # java-crawler:
+      - containerPort: 30005
+        hostPort: 9090
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # java-search-engine:
+      - containerPort: 30006
+        hostPort: 9091
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # python-summarization-service:
+      - containerPort: 30007
+        hostPort: 6066
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # python-relationship-extraction-service:
+      - containerPort: 30008
+        hostPort: 6067
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      # spark-master:
+      - containerPort: 30009
+        hostPort: 8080
+        listenAddress: "127.0.0.1"
+        protocol: TCP

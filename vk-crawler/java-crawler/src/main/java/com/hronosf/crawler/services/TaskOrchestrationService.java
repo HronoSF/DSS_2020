@@ -1,6 +1,5 @@
 package com.hronosf.crawler.services;
 
-import com.hronosf.crawler.controller.StartParsingAsServiceRequestDTO;
 import com.hronosf.crawler.controller.StartParsingAsUserRequestDTO;
 
 import java.util.List;

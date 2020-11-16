@@ -1,0 +1,19 @@
+{{- if .Values.istio.ingress.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "backend-skeleton.fullname" . }}-gateway
+  labels:
+    app.kubernetes.io/name: {{ include "backend-skeleton.fullname" . }}
+    helm.sh/chart: {{ include "backend-skeleton.fullname" . }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: {{ .Values.service.port }}
+        name: grpc
+        protocol: HTTP
+      hosts:
+        - "*"
+  {{- end }}

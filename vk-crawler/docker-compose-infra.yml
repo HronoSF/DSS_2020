@@ -25,13 +25,13 @@ services:
   #   ports:
   #     - "1358:1358"
 
-  # protobuf_sender_ui:
-  #   image: gusaul/grpcox:latest
-  #   container_name: protobuf_sender_ui
-  #   ports:
-  #     - "6969:6969"
-  #   volumes:
-  #     - /log:/log
+  protobuf_sender_ui:
+    image: gusaul/grpcox:latest
+    container_name: protobuf_sender_ui
+    ports:
+      - "6969:6969"
+    volumes:
+      - /log:/log
       
   spark:
     image: hronosf/vk-crawler-spark-base-image
@@ -39,10 +39,17 @@ services:
       dockerfile: ./Dockerfile
       context: ./util/
     container_name: spark
-    environment:
-      - SPARK_MODE=master
+    user: root
+    # environment:
+    #   - SPARK_MODE=master
+    command: bash -c "
+      unset SPARK_MASTER_PORT && 
+      echo \"$$(hostname -i) spark-master\" >> /etc/hosts && 
+      echo \"spark.driver.host $$(hostname -i)\" >> /opt/bitnami/spark/conf/spark-defaults.conf && 
+      echo \"spark.driver.bindAddress $$(hostname -i)\" >> /opt/bitnami/spark/conf/spark-defaults.conf && 
+      /opt/bitnami/java/bin/java -cp /opt/bitnami/spark/conf/:/opt/bitnami/spark/jars/* -Xmx1g org.apache.spark.deploy.master.Master --ip spark-master --port 7077 --webui-port 8080"
     ports:  
-      - '8080:8080'
+      - '1010:8080'
       - '7077:7077'
     networks:
         - crawler_internal
@@ -52,11 +59,11 @@ services:
     build: 
       dockerfile: ./Dockerfile
       context: ./util/
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark:7077
-      - SPARK_WORKER_MEMORY=4G
-      - SPARK_WORKER_CORES=6
+    # environment:
+    #   - SPARK_MODE=worker
+    #   - SPARK_MASTER_URL=spark://spark:7077
+    #   - SPARK_WORKER_MEMORY=4G
+    #   - SPARK_WORKER_CORES=6
     networks:
         - crawler_internal
     links: 
@@ -75,9 +82,9 @@ services:
     volumes:
       - ./util/envoy/envoy.yaml:/etc/envoy/envoy.yaml
 
-  proxy-for-vk_1:
-    container_name: proxy-for-vk_1
-    image: hronosf/vk-crawler-proxy-for-vk-1
+  vk-proxy-auth:
+    container_name: vk-proxy-auth
+    image: hronosf/vk-crawler-proxy-auth
     build:
       dockerfile: proxy-for-vk/Dockerfile_proxy_1
       context: ./util/
@@ -87,9 +94,9 @@ services:
     ports:
       - 8010:8010
 
-  proxy-for-vk_2:
-    container_name: proxy-for-vk_2
-    image: hronosf/vk-crawler-proxy-for-vk-2
+  vk-proxy-api:
+    container_name: vk-proxy-api
+    image: hronosf/vk-crawler-proxy-api
     build:
       dockerfile: proxy-for-vk/Dockerfile_proxy_2
       context: ./util/

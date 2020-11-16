@@ -1,0 +1,65 @@
+{{- if .Values.istio.ingress.enabled -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "backend-skeleton.fullname" . }}-gateway
+  labels:
+    app.kubernetes.io/name: {{ include "backend-skeleton.fullname" . }}
+    helm.sh/chart: {{ include "backend-skeleton.fullname" . }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: {{ .Values.service.port }}
+        name: grpc
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "backend-skeleton.fullname" . }}
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - {{ include "backend-skeleton.fullname" . }}-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: {{ .Values.istio.host }}
+            port:
+              number: {{ .Values.service.port }}
+      corsPolicy:
+        allowOrigins:
+          - regex: ".*"
+        allowMethods:
+          - POST
+          - GET
+          - OPTIONS
+          - PUT
+          - DELETE
+        allowHeaders:
+          - grpc-timeout
+          - content-type
+          - keep-alive
+          - user-agent
+          - cache-control
+          - content-type
+          - content-transfer-encoding
+          - custom-header-1
+          - x-accept-content-transfer-encoding
+          - x-accept-response-streaming
+          - x-user-agent
+          - x-grpc-web
+        maxAge: 1728s
+        exposeHeaders:
+          - custom-header-1
+          - grpc-status
+          - grpc-message
+  {{- end }}
