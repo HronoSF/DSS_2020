@@ -2,8 +2,25 @@
 Автоматический агрегатор данных с ВК (используя АПИ ВК) 
 (тексты из пуб. Страниц пользователей, постов в группах заданных администратором) + прослойка с ElasticSearch + микросервисы с нейронками выдающими краткую суть  текстов, пары персонаж - отношение,+ Клиент поиска постов и визуализации графа взаимо отношений пользователей к людям (вася не любит петю и дашу но обажает машу)
 
-**Demo:**
-[Youtube](https://www.youtube.com/watch?v=MXfpYYRk6eI)
+**Demo:**<br>
+[Crawler-App demo](https://www.youtube.com/watch?v=MXfpYYRk6eI) <br>
+[Helm-Istio demo](https://www.youtube.com/watch?v=MwToFe6DJmg) <br>
+
+**For deploy in k8s:**<br>
+
+Requirements:<br>
+* **Docker** ( if locally )<br> 
+* **Kind** ( choco install kind --version=0.9.0 (if locally) )<br>
+* **Kubectl** ( choco install kubernetes-cli --version=1.19.1 )<br>
+* **Helm** ( choco install kubernetes-helm --version=3.4.0 )<br>
+* **Itioctl** ( choco install istioctl --version=1.7.4 )<br>
+
+To deploy ( it takes about 20-30 minutes ):
+1. cd k8s-helm
+2. sh deploy.sh
+
+
+<br>
 
 **For local startup:**
 1. open git bash (if you have Windows) or bash (if Unix)
