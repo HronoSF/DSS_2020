@@ -25,13 +25,13 @@ services:
   #   ports:
   #     - "1358:1358"
 
-  protobuf_sender_ui:
-    image: gusaul/grpcox:latest
-    container_name: protobuf_sender_ui
-    ports:
-      - "6969:6969"
-    volumes:
-      - /log:/log
+  # protobuf_sender_ui:
+  #   image: gusaul/grpcox:latest
+  #   container_name: protobuf_sender_ui
+  #   ports:
+  #     - "6969:6969"
+  #   volumes:
+  #     - /log:/log
       
   spark:
     image: hronosf/vk-crawler-spark-base-image
@@ -40,8 +40,8 @@ services:
       context: ./util/
     container_name: spark
     user: root
-    # environment:
-    #   - SPARK_MODE=master
+    environment:
+      - SPARK_MODE=master
     command: bash -c "
       unset SPARK_MASTER_PORT && 
       echo \"$$(hostname -i) spark-master\" >> /etc/hosts && 
@@ -59,11 +59,11 @@ services:
     build: 
       dockerfile: ./Dockerfile
       context: ./util/
-    # environment:
-    #   - SPARK_MODE=worker
-    #   - SPARK_MASTER_URL=spark://spark:7077
-    #   - SPARK_WORKER_MEMORY=4G
-    #   - SPARK_WORKER_CORES=6
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+      - SPARK_WORKER_MEMORY=4G
+      - SPARK_WORKER_CORES=6
     networks:
         - crawler_internal
     links: 

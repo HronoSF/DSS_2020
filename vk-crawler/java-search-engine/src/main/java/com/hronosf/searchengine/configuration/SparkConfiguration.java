@@ -46,12 +46,6 @@ public class SparkConfiguration {
     @Setter(onMethod = @__(@Autowired))
     private Environment environment;
 
-    @Value("${spark.driver.host}")
-    private String sparkDriverHost;
-
-    @Value("${spark.mode}")
-    private String sparkSubmitMode;
-
     // =======================> Bean definitions:
     @Bean(destroyMethod = "close")
     public JavaSparkContext sc() {
@@ -79,9 +73,7 @@ public class SparkConfiguration {
 
             conf.setJars(jars)
                     .set("spark.cores.max", corePerWorkerCount)
-                    .set("spark.submit.deployMode", sparkSubmitMode)
-                    .set("spark.driver.host", sparkDriverHost)
-                    .set("spark.driver.port", "7077")
+                    .set("spark.submit.deployMode", "cluster")
                     .set("spark.driver.bindAddress", "0.0.0.0");
         }
 
