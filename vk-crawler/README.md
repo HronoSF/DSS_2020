@@ -8,7 +8,7 @@
 
 **For deploy in k8s:**<br>
 
-❗  **Important:** deploy will be rewritten after istio issues fixes: https://github.com/istio/istio/issues/27900  <br>
+❗  **Important:** deploy will be rewritten after istio issue fix: https://github.com/istio/istio/issues/27900  <br>
 
 Requirements:<br>
 * **Docker** ( if locally )<br> 
@@ -18,8 +18,9 @@ Requirements:<br>
 * **Itioctl** ( choco install istioctl --version=1.7.4 )<br>
 
 To deploy ( it takes about 20-30 minutes ):
-1. cd k8s-helm
-2. sh deploy.sh
+1. open git bash (if you have Windows) or bash (if Unix)
+2. cd k8s-helm
+3. sh deploy.sh
 
 <br>
 
