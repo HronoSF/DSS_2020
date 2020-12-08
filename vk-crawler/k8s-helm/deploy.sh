@@ -60,11 +60,11 @@ done
 
 tput setaf 0
 
-# deploy python-relationship-extractor-service
-# deploy python-summarization-service
-# deploy proxy-api
-# deploy proxy-auth
-# deploy angular-admin-ui
-# deploy angular-client-ui
-# deploy java-search-engine
-# deploy java-data-processing
+deploy python-relationship-extractor-service
+deploy python-summarization-service
+deploy proxy-api
+deploy proxy-auth
+deploy angular-admin-ui
+deploy angular-client-ui
+deploy java-search-engine
+deploy java-data-processing
