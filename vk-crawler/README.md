@@ -11,7 +11,7 @@
 ❗  **Important:** deploy will be rewritten after istio issue fix: https://github.com/istio/istio/issues/27900  <br>
 
 Requirements:<br>
-* **Docker** ( if locally )<br> 
+* **Docker on WSL2** ( if locally )<br> 
 * **Kind** ( choco install kind --version=0.9.0 (if locally) )<br>
 * **Kubectl** ( choco install kubernetes-cli --version=1.19.1 )<br>
 * **Helm** ( choco install kubernetes-helm --version=3.4.0 )<br>
