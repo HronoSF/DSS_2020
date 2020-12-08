@@ -49,9 +49,9 @@ tput setaf 1
 while [[ $(test $(echo $(kubectl exec elasticsearch-master-0 -c elasticsearch -- curl -o /dev/null -s -w "%{http_code}\n" http://localhost:9200/wall_posts)) != $(echo 200) && echo false || echo true) != true ]]; do
 
   if [[ $(kubectl get pods $(kubectl get pod -l app.kubernetes.io/instance=java-crawler -o jsonpath="{.items[0].metadata.name}") -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') == "True" ]]; then
-    echo $'\nEs refused to crawler turning down app. Try to redeploy application.'
-    eval sh ./down.sh
-    evel exit 1
+    echo $'\nEs refused to crawler. Turning down app. Try to redeploy application.'
+    eval sh ./delete.sh
+    eval exit 1
   fi
 
   echo $'\nWait for Java-Crawler to init...'
@@ -60,11 +60,11 @@ done
 
 tput setaf 0
 
-deploy python-relationship-extractor-service
-deploy python-summarization-service
-deploy proxy-api
-deploy proxy-auth
-deploy angular-admin-ui
-deploy angular-client-ui
-deploy java-search-engine
-deploy java-data-processing
+# deploy python-relationship-extractor-service
+# deploy python-summarization-service
+# deploy proxy-api
+# deploy proxy-auth
+# deploy angular-admin-ui
+# deploy angular-client-ui
+# deploy java-search-engine
+# deploy java-data-processing
