@@ -17,10 +17,34 @@ Requirements:<br>
 * **Helm** ( choco install kubernetes-helm --version=3.4.0 )<br>
 * **Itioctl** ( choco install istioctl --version=1.7.4 )<br>
 
-To deploy ( it takes about 20-30 minutes ):
+**To deploy ( it takes about 20-30 minutes ):**
 1. open git bash (if you have Windows) or bash (if Unix)
 2. cd k8s-helm
 3. sh deploy.sh
+
+<br>
+Checkout k8s cluster with command 
+
+```
+kubectl get pods
+```
+
+untill you see something like:<br>
+
+![alt text](./util/readme-data/k8s-deploy.png)
+
+<br>
+
+**How to use with deploy:** (url of ui apps different from local startup)
+1.  go to [admin app](http://localhost:4200/admin)
+2.  go to [client app](http://localhost:4200/client)
+
+<br>
+
+**To delete cluster:**
+1. open git bash (if you have Windows) or bash (if Unix)
+2. cd k8s-helm
+3. sh delete.sh
 
 <br>
 
@@ -46,7 +70,7 @@ Go to [Spark-Master UI](http://localhost:8080) and check that all services conne
     * run.sh (how much workers to up)
     * docker-compose-services.yml (how much cores should each spark-service use from each worker, spark-master url)
 
-**How to use:**
+**How to use locally:**
 1. start up
 2. go to [admin app](http://localhost:4201)
 3. login to ["Vkontakte"](https://vk.com) if needed (app will automaticly redirect to vk OAuth2 page)
