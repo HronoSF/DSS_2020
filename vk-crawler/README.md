@@ -17,10 +17,28 @@ Requirements:<br>
 * **Helm** ( choco install kubernetes-helm --version=3.4.0 )<br>
 * **Itioctl** ( choco install istioctl --version=1.7.4 )<br>
 
-To deploy ( it takes about 20-30 minutes ):
+**To deploy ( it takes about 20-30 minutes ):**
 1. open git bash (if you have Windows) or bash (if Unix)
 2. cd k8s-helm
 3. sh deploy.sh
+
+<br>
+Checkout k8s cluster with command 
+
+```
+kubectl get pods
+```
+
+untill you see something like:<br>
+
+![alt text](./util/readme-data/k8s-deploy.png)
+
+<br>
+
+**To delete cluster:**
+1. open git bash (if you have Windows) or bash (if Unix)
+2. cd k8s-helm
+3. sh delete.sh
 
 <br>
 
