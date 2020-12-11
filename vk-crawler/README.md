@@ -6,8 +6,10 @@
 [Crawler-App demo](https://www.youtube.com/watch?v=MXfpYYRk6eI) <br>
 [Helm-Istio demo](https://www.youtube.com/watch?v=MwToFe6DJmg) <br>
 
+❗  **Important:** deploy via helm testes ONLY on windows 10 with WSL2 with following settings: <br>
+![alt text](./util/readme-data/docker-setting.png)
+
 **For deploy in k8s:**<br>
-❗  **Important:** deploy testes only on windows 10 with WSL2  <br>
 
 ❗  **Important:** deploy will be rewritten after istio issue fix: https://github.com/istio/istio/issues/27900  <br>
 
