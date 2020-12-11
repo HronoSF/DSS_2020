@@ -6,7 +6,7 @@
 [Crawler-App demo](https://www.youtube.com/watch?v=MXfpYYRk6eI) <br>
 [Helm-Istio demo](https://www.youtube.com/watch?v=MwToFe6DJmg) <br>
 
-❗  **Important:** deploy via helm tests ONLY on windows 10 with WSL2 with following settings now: <br>
+❗  **Important:** deploy via helm tested ONLY on windows 10 with WSL2 with following settings now: <br>
 
 ![alt text](./util/readme-data/image.png)
 
